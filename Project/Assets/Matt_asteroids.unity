@@ -141,7 +141,7 @@ GameObject:
   - component: {fileID: 662654854}
   m_Layer: 0
   m_Name: topBorder
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -167,7 +167,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 662654852}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 02a96e5ec442ed349ae750cb81e71182, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -445,7 +445,7 @@ GameObject:
   - component: {fileID: 1312079898}
   m_Layer: 0
   m_Name: rightBorder
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -471,12 +471,12 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1312079896}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 02a96e5ec442ed349ae750cb81e71182, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1.0000002, y: 1.0000001, z: 1.0000002}
+  m_Center: {x: 0, y: 0, z: -0.0000000018626451}
 --- !u!23 &1312079899
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -524,6 +524,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1312079896}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1313183241 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 154020, guid: ea83bfa97bd12b74180f94539ba2cd42,
+    type: 3}
+  m_PrefabInstance: {fileID: 1428719770}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1353596856
 GameObject:
   m_ObjectHideFlags: 0
@@ -538,7 +544,7 @@ GameObject:
   - component: {fileID: 1353596858}
   m_Layer: 0
   m_Name: leftBorder
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -564,7 +570,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1353596856}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 02a96e5ec442ed349ae750cb81e71182, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -631,7 +637,7 @@ GameObject:
   - component: {fileID: 1387459561}
   m_Layer: 0
   m_Name: bottomBorder
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -657,7 +663,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1387459559}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 02a96e5ec442ed349ae750cb81e71182, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -723,7 +729,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 487368, guid: ea83bfa97bd12b74180f94539ba2cd42, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.24
       objectReference: {fileID: 0}
     - target: {fileID: 487368, guid: ea83bfa97bd12b74180f94539ba2cd42, type: 3}
       propertyPath: m_LocalPosition.y
@@ -731,7 +737,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 487368, guid: ea83bfa97bd12b74180f94539ba2cd42, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.44
       objectReference: {fileID: 0}
     - target: {fileID: 487368, guid: ea83bfa97bd12b74180f94539ba2cd42, type: 3}
       propertyPath: m_LocalRotation.x
@@ -769,6 +775,18 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5401012, guid: ea83bfa97bd12b74180f94539ba2cd42, type: 3}
+      propertyPath: m_IsKinematic
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5401012, guid: ea83bfa97bd12b74180f94539ba2cd42, type: 3}
+      propertyPath: m_AngularDrag
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5401012, guid: ea83bfa97bd12b74180f94539ba2cd42, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ea83bfa97bd12b74180f94539ba2cd42, type: 3}
 --- !u!1 &1615611540 stripped
@@ -799,16 +817,17 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
-  turnForce: 0
-  moveForce: 0
-  moveMax: 0
+  turnForce: 3
+  moveForce: 3
+  moveMax: 6
   blaster:
   - {fileID: 542745512}
   shields: {fileID: 0}
   xGame1: {fileID: 751402862}
   blast: {fileID: 142944, guid: f6c6c9ff1b3b3ea42b4030f1d6a73066, type: 3}
-  engine: {fileID: 0}
+  engine: {fileID: 1313183241}
   explosion: {fileID: 0}
+  aVel: {x: 0, y: 0, z: 0}
 --- !u!114 &1615611547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -822,7 +841,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 3
+    VectorObservationSize: 0
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 3

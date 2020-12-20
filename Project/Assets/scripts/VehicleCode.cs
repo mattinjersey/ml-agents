@@ -18,7 +18,7 @@ public class VehicleCode : Agent {
     public GameObject blast;
     public GameObject engine;
     public GameObject explosion;
-
+    public Vector3 aVel;
     private Rigidbody rb;
     private float heading;
 
@@ -31,11 +31,7 @@ public class VehicleCode : Agent {
     private int hasShields;
    
     EnvironmentParameters m_ResetParams;
-    void Start() {
-        // gc = (GameController)GameObject.Find("GameController").GetComponent("GameController");
-        //xGame1 = (GameObject)this.transform.parent.gameObject;
-   
-    }
+
 
     public override void Initialize()
     {
@@ -43,10 +39,10 @@ public class VehicleCode : Agent {
         xGame1 = (GameObject)this.transform.parent.gameObject;
         rb = GetComponent<Rigidbody>();
         heading = 0;
-        Show();
+       // Show();
         nextShotTime = Time.time;
         m_ResetParams = Academy.Instance.EnvironmentParameters;
-       // SetResetParameters();
+        SetResetParameters();
         Debug.Log("Initialize");
     }
     public override void CollectObservations(VectorSensor sensor)
@@ -56,7 +52,7 @@ public class VehicleCode : Agent {
             sensor.AddObservation(gameObject.transform.position);
             sensor.AddObservation(rb.velocity);   */
     }
-    private void FixedUpdate()
+    private void Update()
     {
             RequestDecision();
     }
@@ -66,9 +62,10 @@ public class VehicleCode : Agent {
      //   var bHyper = 2f * Mathf.Clamp(actionBuffers.ContinuousActions[1], -1f, 1f);
         var bRocket = 2f * Mathf.Clamp(actionBuffers.ContinuousActions[1], -1f, 1f);
         var bTurn = 2f * Mathf.Clamp(actionBuffers.ContinuousActions[2], -1f, 1f);
-        //float velocity = Mathf.Clamp(rb.velocity.magnitude, 0f, moveMax * transform.lossyScale.y);
+        float velocity = Mathf.Clamp(rb.velocity.magnitude, 0f, moveMax * transform.lossyScale.y);
         if (rb.velocity.magnitude > moveMax)
         {
+            Debug.Log("constrain velocity");
             rb.velocity = rb.velocity.normalized * moveMax;
         }
             int aMove = 0, aTurn = 0;
@@ -98,6 +95,14 @@ public class VehicleCode : Agent {
         {
             aTurn = 1;
         }
+        Vector3 aVel = rb.velocity;
+        aVel.x = 0f;
+        rb.velocity = aVel;
+        Vector3 bRot = rb.transform.localRotation.eulerAngles;
+        bRot.x = 0;bRot.z = 0;
+        rb.transform.localRotation = Quaternion.Euler(bRot);
+        
+
          ProcessTurn(aTurn,aMove);
         SetReward(myReward);
         myReward = 0f;
@@ -135,10 +140,10 @@ public class VehicleCode : Agent {
             turn =Input.GetAxis("Horizontal");
             move = Input.GetAxis("Vertical");
             ContinousOut[0] = 0;
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetButton("Fire1"))
             {
                 ContinousOut[0] = 0.1f;
-                Debug.Log("fire!");
+               // Debug.Log("fire!");
             }
            /* ContinousOut[1] = 0;
             if (Input.GetKeyDown(KeyCode.Space))
@@ -172,10 +177,20 @@ public class VehicleCode : Agent {
         heading += turnForce * (float)aTurn;
         if (Mathf.Abs(aMove)>0.00001f)
         {
-            //Debug.Log("moving!");
+            Debug.Log("moving!");
         }
-        rb.velocity += transform.forward * moveForce * transform.lossyScale.y * (float)aMove;
-        rb.rotation = Quaternion.Euler(0.0f, heading, (float)aTurn * -30); 
+        if (Mathf.Abs(aTurn) > 0.00001f)
+        {
+            Debug.Log("turining!");
+        }
+        float aMag = (transform.forward * moveForce * (float)aMove).magnitude;
+        if (aMag>1f)
+        {
+          //  Debug.Log("change vel:"+aMag);
+        }
+        rb.velocity += transform.forward * moveForce  * (float)aMove;
+        rb.transform.Rotate(0,- aTurn * 4.0f,0);
+        rb.angularVelocity = rb.angularVelocity*0.9f;
     }
     void Fire() {
         if (isAlive) {
@@ -197,28 +212,78 @@ public class VehicleCode : Agent {
         }
     }
 
-    void OnTriggerEnter(Collider other) {
-        if (isAlive) {
+    void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("Collision Trigger !");
+        if (isAlive)
+        {
             // I've crashed into something
-            if (other.gameObject.CompareTag("Asteroid") ) { 
+            if (other.gameObject.CompareTag("Asteroid"))
+            {
                 Explode();
             }
 
-            if (other.gameObject.CompareTag("Saucer")) {
+            if (other.gameObject.CompareTag("Saucer"))
+            {
                 other.gameObject.SendMessage("PlayerBlast");
                 Explode();
+            }
+         /*   if (other.gameObject.CompareTag("wall"))
+            {
+                Debug.Log("hit wall !");
+                if (other.gameObject.name == "bottomBorder" | other.gameObject.name == "topBorder")
+                {
+                    Debug.Log("bottom or top wall !");
+                    Vector3 newVelocity = new Vector3(rb.velocity.x, rb.velocity.y, -1.0f * rb.velocity.z);
+                    // rb.AddForce(newVelocity - rb.velocity, ForceMode.VelocityChange);
+                }
+                else
+                {
+                    Debug.Log("right or left wall !");
+                    Vector3 newVelocity = new Vector3(rb.velocity.x, rb.velocity.y, -1.0f * rb.velocity.z);
+                    Debug.Log("newVelocity:" + newVelocity);
+                     rb.velocity = newVelocity;
+                }
+                rb.transform.Rotate(0, 180f, 0);
+            }*/
+        }
+    }
+   /* 
+       void OnCollisionEnter(Collision other)
+        {
+        Debug.Log("Collision OnCollision !");
+        if (other.gameObject.CompareTag("wall"))
+            {
+                Debug.Log("hit wall !");
+                if (other.gameObject.name=="bottomBorder" | other.gameObject.name == "topBorder")
+                {
+                    Debug.Log("bottom or top wall !");
+                    Vector3 newVelocity= new Vector3( rb.velocity.x, rb.velocity.y, -1.0f * rb.velocity.z);
+                   // rb.AddForce(newVelocity - rb.velocity, ForceMode.VelocityChange);
+                }
+               else
+                {
+                    Debug.Log("right or left wall !");
+                    Vector3 newVelocity = new Vector3( rb.velocity.x, rb.velocity.y, -1.0f * rb.velocity.z);
+                Debug.Log("newVelocity:" + newVelocity);
+              //  rb.velocity = newVelocity;
+                }
+                rb.transform.Rotate(0, 180f, 0);
             }
 
             if (other.gameObject.CompareTag("Powerup")) {
                 ApplyPowerup(other.gameObject);
-            }
+            }    
         }
-    }
+    */
     public void SetResetParameters()
     {
         myReward = 0f;
         killPlayer = false;
         rb.velocity = new Vector3(0f, 0f, 0f);
+        Debug.Log("reset velocity");
+        engine.SetActive(false);
+        //GetComponent<Rigidbody>().rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
 
     }
     void ApplyPowerup(GameObject powerup) {
