@@ -3,21 +3,22 @@ using System.Collections;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
-
+using System;
+using Random = UnityEngine.Random;
 public class VehicleCode : Agent {
     float myReward = 0f;
     bool killPlayer = false;
     public float turnForce;
     public float moveForce;
     public float moveMax;
-    GameObject xGame1;
+    //GameObject xGame1;
     public GameObject[] blaster;
     public GameObject shields;
-
+    public GameObject xGame1;
     public GameObject blast;
     public GameObject engine;
     public GameObject explosion;
-    public GameController gc;
+
     private Rigidbody rb;
     private float heading;
 
@@ -31,12 +32,15 @@ public class VehicleCode : Agent {
    
     EnvironmentParameters m_ResetParams;
     void Start() {
-        gc = (GameController)GameObject.Find("GameController").GetComponent("GameController");
-        xGame1 = (GameObject)this.transform.parent.gameObject;
+        // gc = (GameController)GameObject.Find("GameController").GetComponent("GameController");
+        //xGame1 = (GameObject)this.transform.parent.gameObject;
+   
     }
 
     public override void Initialize()
     {
+        isAlive = true;
+        xGame1 = (GameObject)this.transform.parent.gameObject;
         rb = GetComponent<Rigidbody>();
         heading = 0;
         Show();
@@ -47,10 +51,14 @@ public class VehicleCode : Agent {
     }
     public override void CollectObservations(VectorSensor sensor)
     {   
-          /*  sensor.AddObservation(gameObject.transform.rotation.z);
+        /*   sensor.AddObservation(gameObject.transform.rotation.z);
             sensor.AddObservation(gameObject.transform.rotation.x);
             sensor.AddObservation(gameObject.transform.position);
             sensor.AddObservation(rb.velocity);   */
+    }
+    private void FixedUpdate()
+    {
+            RequestDecision();
     }
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
@@ -98,7 +106,7 @@ public class VehicleCode : Agent {
             ExplosionInfo info = new ExplosionInfo();
             info.origin = transform.position;
             info.strength = 1.0f;
-            gc.SendMessage("MakeExplosion", info);
+            //gc.SendMessage("MakeExplosion", info);
             EndEpisode();
             Debug.Log("End episode");
 
@@ -113,22 +121,24 @@ public class VehicleCode : Agent {
     {
         SetResetParameters();
         Debug.Log("OnEpisodeBegin");
-        gc.ReinitLevel();
+        // gc.ReinitLevel();
         // GameObject.Find("GameController").SendMessage("OnLevelWasLoaded");
     }
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var ContinousOut = actionsOut.ContinuousActions;
         ContinousOut[0] = 0;
-       
-       if (isAlive)
+      //  Debug.Log("Heuristic"+isAlive);
+
+        if (isAlive)
        {
             turn =Input.GetAxis("Horizontal");
             move = Input.GetAxis("Vertical");
             ContinousOut[0] = 0;
-            if (Input.GetButton("Fire1"))
+            if (Input.GetKeyDown(KeyCode.Space))
             {
                 ContinousOut[0] = 0.1f;
+                Debug.Log("fire!");
             }
            /* ContinousOut[1] = 0;
             if (Input.GetKeyDown(KeyCode.Space))
@@ -170,6 +180,7 @@ public class VehicleCode : Agent {
     void Fire() {
         if (isAlive) {
             double now = Time.time;
+            hasTrishots = 0;
             if (now >= nextShotTime) {
                 if ( hasTrishots>0 ) {
                     hasTrishots -= 1;
@@ -301,6 +312,6 @@ public class VehicleCode : Agent {
         GetComponent<BoxCollider>().enabled = true;
         isAlive = true;
     }
-
+  
 
 }
