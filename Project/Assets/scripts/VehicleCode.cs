@@ -5,7 +5,8 @@ using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using System;
 using Random = UnityEngine.Random;
-public class VehicleCode : Agent {
+public class VehicleCode : Agent
+{
     float myReward = 0f;
     bool killPlayer = false;
     public float turnForce;
@@ -29,7 +30,7 @@ public class VehicleCode : Agent {
     private bool isAlive;
     private int hasTrishots;
     private int hasShields;
-   
+
     EnvironmentParameters m_ResetParams;
 
 
@@ -39,14 +40,14 @@ public class VehicleCode : Agent {
         xGame1 = (GameObject)this.transform.parent.gameObject;
         rb = GetComponent<Rigidbody>();
         heading = 0;
-       // Show();
+        // Show();
         nextShotTime = Time.time;
         m_ResetParams = Academy.Instance.EnvironmentParameters;
         SetResetParameters();
         Debug.Log("Initialize");
     }
     public override void CollectObservations(VectorSensor sensor)
-    {   
+    {
         /*   sensor.AddObservation(gameObject.transform.rotation.z);
             sensor.AddObservation(gameObject.transform.rotation.x);
             sensor.AddObservation(gameObject.transform.position);
@@ -54,12 +55,12 @@ public class VehicleCode : Agent {
     }
     private void Update()
     {
-            RequestDecision();
+        RequestDecision();
     }
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         var bFire = 2f * Mathf.Clamp(actionBuffers.ContinuousActions[0], -1f, 1f);
-     //   var bHyper = 2f * Mathf.Clamp(actionBuffers.ContinuousActions[1], -1f, 1f);
+        //   var bHyper = 2f * Mathf.Clamp(actionBuffers.ContinuousActions[1], -1f, 1f);
         var bRocket = 2f * Mathf.Clamp(actionBuffers.ContinuousActions[1], -1f, 1f);
         var bTurn = 2f * Mathf.Clamp(actionBuffers.ContinuousActions[2], -1f, 1f);
         float velocity = Mathf.Clamp(rb.velocity.magnitude, 0f, moveMax * transform.lossyScale.y);
@@ -68,30 +69,30 @@ public class VehicleCode : Agent {
             Debug.Log("constrain velocity");
             rb.velocity = rb.velocity.normalized * moveMax;
         }
-            int aMove = 0, aTurn = 0;
-        if (bFire>0)
+        int aMove = 0, aTurn = 0;
+        if (bFire > 0)
         {
             Fire();
         }
-      /*  if (bHyper>0)
-        {
-            HyperspaceJump();
-        }*/
-         if (bRocket>0)
+        /*  if (bHyper>0)
+          {
+              HyperspaceJump();
+          }*/
+        if (bRocket > 0)
         {
             if (engine) engine.SetActive(true);
             aMove = 1;
         }
-        else 
+        else
         {
             if (engine) engine.SetActive(false);
             aMove = 0;
         }
-         if  (bTurn<-0.3)
-            {
+        if (bTurn < -0.3)
+        {
             aTurn = -1;
-            }
-        else if (bTurn>0.3)
+        }
+        else if (bTurn > 0.3)
         {
             aTurn = 1;
         }
@@ -99,18 +100,18 @@ public class VehicleCode : Agent {
         aVel.x = 0f;
         rb.velocity = aVel;
         Vector3 bRot = rb.transform.localRotation.eulerAngles;
-        bRot.x = 0;bRot.z = 0;
+        bRot.x = 0; bRot.z = 0;
         rb.transform.localRotation = Quaternion.Euler(bRot);
-        
 
-         ProcessTurn(aTurn,aMove);
+
+        ProcessTurn(aTurn, aMove);
         SetReward(myReward);
         myReward = 0f;
         if (killPlayer)
         {
-            ExplosionInfo info = new ExplosionInfo();
-            info.origin = transform.position;
-            info.strength = 1.0f;
+           // ExplosionInfo info = new ExplosionInfo();
+         //   info.origin = transform.position;
+         //   info.strength = 1.0f;
             //gc.SendMessage("MakeExplosion", info);
             EndEpisode();
             Debug.Log("End episode");
@@ -133,23 +134,23 @@ public class VehicleCode : Agent {
     {
         var ContinousOut = actionsOut.ContinuousActions;
         ContinousOut[0] = 0;
-      //  Debug.Log("Heuristic"+isAlive);
+        //  Debug.Log("Heuristic"+isAlive);
 
         if (isAlive)
-       {
-            turn =Input.GetAxis("Horizontal");
+        {
+            turn = Input.GetAxis("Horizontal");
             move = Input.GetAxis("Vertical");
             ContinousOut[0] = 0;
             if (Input.GetButton("Fire1"))
             {
                 ContinousOut[0] = 0.1f;
-               // Debug.Log("fire!");
+                // Debug.Log("fire!");
             }
-           /* ContinousOut[1] = 0;
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                ContinousOut[1] = .2f;
-            }*/
+            /* ContinousOut[1] = 0;
+             if (Input.GetKeyDown(KeyCode.Space))
+             {
+                 ContinousOut[1] = .2f;
+             }*/
             ContinousOut[1] = 0;
             if (move > 0)
             {
@@ -172,10 +173,10 @@ public class VehicleCode : Agent {
         }
         //Debug.Log("Heuristic action:" + DiscreteActionsOut[0]);
     }
-    void ProcessTurn(int aTurn,int aMove)
+    void ProcessTurn(int aTurn, int aMove)
     {
         heading += turnForce * (float)aTurn;
-        if (Mathf.Abs(aMove)>0.00001f)
+        if (Mathf.Abs(aMove) > 0.00001f)
         {
             Debug.Log("moving!");
         }
@@ -184,27 +185,31 @@ public class VehicleCode : Agent {
             Debug.Log("turining!");
         }
         float aMag = (transform.forward * moveForce * (float)aMove).magnitude;
-        if (aMag>1f)
+        if (aMag > 1f)
         {
-          //  Debug.Log("change vel:"+aMag);
+            //  Debug.Log("change vel:"+aMag);
         }
-        rb.velocity += transform.forward * moveForce  * (float)aMove;
-        rb.transform.Rotate(0,- aTurn * 4.0f,0);
-        rb.angularVelocity = rb.angularVelocity*0.9f;
+        rb.velocity += transform.forward * moveForce * (float)aMove;
+        rb.transform.Rotate(0, -aTurn * 4.0f, 0);
+        rb.angularVelocity = rb.angularVelocity * 0.9f;
     }
-    void Fire() {
-        if (isAlive) {
+    void Fire()
+    {
+        if (isAlive)
+        {
             double now = Time.time;
             hasTrishots = 0;
-            if (now >= nextShotTime) {
-                if ( hasTrishots>0 ) {
+            if (now >= nextShotTime)
+            {
+                if (hasTrishots > 0)
+                {
                     hasTrishots -= 1;
-                    GameObject a1=Instantiate(blast, blaster[1].transform.position, blaster[1].transform.rotation);
+                    GameObject a1 = Instantiate(blast, blaster[1].transform.position, blaster[1].transform.rotation);
                     a1.transform.parent = xGame1.transform;
                     GameObject a2 = Instantiate(blast, blaster[2].transform.position, blaster[2].transform.rotation);
                     a2.transform.parent = xGame1.transform;
                 }
-                GameObject a3= Instantiate(blast, blaster[0].transform.position, blaster[0].transform.rotation);
+                GameObject a3 = Instantiate(blast, blaster[0].transform.position, blaster[0].transform.rotation);
                 a3.transform.parent = xGame1.transform;
                 GetComponent<AudioSource>().Play();
                 nextShotTime = now + 0.2;
@@ -228,54 +233,53 @@ public class VehicleCode : Agent {
                 other.gameObject.SendMessage("PlayerBlast");
                 Explode();
             }
-         /*   if (other.gameObject.CompareTag("wall"))
-            {
-                Debug.Log("hit wall !");
-                if (other.gameObject.name == "bottomBorder" | other.gameObject.name == "topBorder")
-                {
-                    Debug.Log("bottom or top wall !");
-                    Vector3 newVelocity = new Vector3(rb.velocity.x, rb.velocity.y, -1.0f * rb.velocity.z);
-                    // rb.AddForce(newVelocity - rb.velocity, ForceMode.VelocityChange);
-                }
-                else
-                {
-                    Debug.Log("right or left wall !");
-                    Vector3 newVelocity = new Vector3(rb.velocity.x, rb.velocity.y, -1.0f * rb.velocity.z);
-                    Debug.Log("newVelocity:" + newVelocity);
-                     rb.velocity = newVelocity;
-                }
-                rb.transform.Rotate(0, 180f, 0);
-            }*/
+            /*   if (other.gameObject.CompareTag("wall"))
+               {
+                   Debug.Log("hit wall !");
+                   if (other.gameObject.name == "bottomBorder" | other.gameObject.name == "topBorder")
+                   {
+                       Debug.Log("bottom or top wall !");
+                       Vector3 newVelocity = new Vector3(rb.velocity.x, rb.velocity.y, -1.0f * rb.velocity.z);
+                       // rb.AddForce(newVelocity - rb.velocity, ForceMode.VelocityChange);
+                   }
+                   else
+                   {
+                       Debug.Log("right or left wall !");
+                       Vector3 newVelocity = new Vector3(rb.velocity.x, rb.velocity.y, -1.0f * rb.velocity.z);
+                       Debug.Log("newVelocity:" + newVelocity);
+                        rb.velocity = newVelocity;
+                   }
+                   rb.transform.Rotate(0, 180f, 0);
+               }*/
         }
     }
-   /* 
-       void OnCollisionEnter(Collision other)
-        {
-        Debug.Log("Collision OnCollision !");
-        if (other.gameObject.CompareTag("wall"))
-            {
-                Debug.Log("hit wall !");
-                if (other.gameObject.name=="bottomBorder" | other.gameObject.name == "topBorder")
-                {
-                    Debug.Log("bottom or top wall !");
-                    Vector3 newVelocity= new Vector3( rb.velocity.x, rb.velocity.y, -1.0f * rb.velocity.z);
-                   // rb.AddForce(newVelocity - rb.velocity, ForceMode.VelocityChange);
-                }
-               else
-                {
-                    Debug.Log("right or left wall !");
-                    Vector3 newVelocity = new Vector3( rb.velocity.x, rb.velocity.y, -1.0f * rb.velocity.z);
-                Debug.Log("newVelocity:" + newVelocity);
-              //  rb.velocity = newVelocity;
-                }
-                rb.transform.Rotate(0, 180f, 0);
-            }
-
-            if (other.gameObject.CompareTag("Powerup")) {
-                ApplyPowerup(other.gameObject);
-            }    
-        }
-    */
+    /* 
+        void OnCollisionEnter(Collision other)
+         {
+         Debug.Log("Collision OnCollision !");
+         if (other.gameObject.CompareTag("wall"))
+             {
+                 Debug.Log("hit wall !");
+                 if (other.gameObject.name=="bottomBorder" | other.gameObject.name == "topBorder")
+                 {
+                     Debug.Log("bottom or top wall !");
+                     Vector3 newVelocity= new Vector3( rb.velocity.x, rb.velocity.y, -1.0f * rb.velocity.z);
+                    // rb.AddForce(newVelocity - rb.velocity, ForceMode.VelocityChange);
+                 }
+                else
+                 {
+                     Debug.Log("right or left wall !");
+                     Vector3 newVelocity = new Vector3( rb.velocity.x, rb.velocity.y, -1.0f * rb.velocity.z);
+                 Debug.Log("newVelocity:" + newVelocity);
+               //  rb.velocity = newVelocity;
+                 }
+                 rb.transform.Rotate(0, 180f, 0);
+             }
+             if (other.gameObject.CompareTag("Powerup")) {
+                 ApplyPowerup(other.gameObject);
+             }    
+         }
+     */
     public void SetResetParameters()
     {
         myReward = 0f;
@@ -286,18 +290,22 @@ public class VehicleCode : Agent {
         //GetComponent<Rigidbody>().rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
 
     }
-    void ApplyPowerup(GameObject powerup) {
+    void ApplyPowerup(GameObject powerup)
+    {
         GameObject.Find("GameController").SendMessage("DecrementAsteroid");
 
         PowerupCode code = powerup.GetComponent<PowerupCode>();
 
-        if ( code.type=="Life" ) {
+        if (code.type == "Life")
+        {
             GameObject.Find("GameController").SendMessage("ExtraLife");
         }
-        if ( code.type=="Trishot" ) {
+        if (code.type == "Trishot")
+        {
             hasTrishots = 12;
         }
-        if ( code.type=="Shield" ) {
+        if (code.type == "Shield")
+        {
             hasShields = 3;
             shields.SetActive(true);
         }
@@ -305,50 +313,58 @@ public class VehicleCode : Agent {
     }
     public void xAddReward(float inScore)
     {
-        myReward+=inScore;
+        myReward += inScore;
     }
     public float ShowReward()
     {
         return GetCumulativeReward();
     }
-    void Explode() {
-        if (hasShields > 0) {
+    void Explode()
+    {
+        if (hasShields > 0)
+        {
             hasShields -= 1;
             xAddReward(-.1f);
-            if (hasShields<1) {
+            if (hasShields < 1)
+            {
                 shields.SetActive(false);
             }
         }
-        else {
+        else
+        {
             hasTrishots = 0;
             hasShields = 0;
 
-           GameObject a4= Instantiate(explosion, transform.position, Quaternion.identity);
+            GameObject a4 = Instantiate(explosion, transform.position, Quaternion.identity);
             a4.transform.parent = xGame1.transform;
-           // Hide();
+            // Hide();
             xAddReward(-1f);
             killPlayer = true;
-            
+
         }
     }
 
-    void HyperspaceJump() {
+    void HyperspaceJump()
+    {
         Hide();
         HyperspaceIn();
     }
 
-    void HyperspaceIn(bool center=false) {
+    void HyperspaceIn(bool center = false)
+    {
 
         GetComponent<Rigidbody>().velocity = new Vector3(0.0f, 0.0f, 0.0f);
         GetComponent<Rigidbody>().rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
         transform.rotation = Quaternion.identity;
 
-        if (center) {
+        if (center)
+        {
             // center
             transform.position = new Vector3(0.0f, 0.0f, 0.0f);
             heading = 0.0f;
         }
-        else {
+        else
+        {
             // random
             float x, y, a;
             x = Random.Range(-15, 15);
@@ -359,24 +375,26 @@ public class VehicleCode : Agent {
             heading = a;
         }
 
-        ExplosionInfo info = new ExplosionInfo();
-        info.origin = transform.position;
-        info.strength = 0.1f;
-        GameObject.Find("GameController").SendMessage("MakeExplosion",info);
+        //ExplosionInfo info = new ExplosionInfo();
+       // info.origin = transform.position;
+        //info.strength = 0.1f;
+        //GameObject.Find("GameController").SendMessage("MakeExplosion", info);
         Show();
     }
 
-    void Hide() {
+    void Hide()
+    {
         GetComponent<Renderer>().enabled = false;
         GetComponent<BoxCollider>().enabled = false;
         isAlive = false;
     }
 
-    void Show() {
+    void Show()
+    {
         GetComponent<Renderer>().enabled = true;
         GetComponent<BoxCollider>().enabled = true;
         isAlive = true;
     }
-  
+
 
 }

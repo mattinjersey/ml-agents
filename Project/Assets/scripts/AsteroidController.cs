@@ -4,12 +4,9 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 
 
-public class ExplosionInfo {
-    public Vector3 origin;
-    public float strength;
-}
 
-public class GameController : MonoBehaviour {
+
+public class AsteroidController : MonoBehaviour {
 
     // SCORING SYSTEM
     static int pts_AsteroidLarge  = 10;
@@ -21,8 +18,7 @@ public class GameController : MonoBehaviour {
     static int pts_TimeBonusBeforeSeconds = 180;
     static int pts_TimeBonusPerSecond = 10;
 
-    static int init_playerLives = 1;
-    static int max_playerLives = 10;
+  
 
     //static int bonus_every = 2000;
 
@@ -55,14 +51,13 @@ public class GameController : MonoBehaviour {
     public GameObject saucerLarge;
     public GameObject saucerSmall;
 
-    private Text scoreText;
-    private Text replayText;
-    private Text gameoverText;
+    //private Text scoreText=(Text)"placeholder";
+    
+  
 
     private int numAsteroids;
     private int playerLives;
     private float levelStartTime;
-    private bool gameover;
     private float gameoverTime;
    // private bool showCredits;
 
@@ -73,53 +68,15 @@ public class GameController : MonoBehaviour {
     // Use this for initialization
     void Start() {
 
-        // only one should exist
-        //if (instance != null && instance != this) {
-       // if (init) { 
-         //   Destroy(this.gameObject);
-         //   return;
-     //   } 
-        //player= GameObject.Find("PlayerShip");
+     
+       // player= GameObject.Find("PlayerShip");
         refVehicle = (VehicleCode)player.GetComponent(typeof(VehicleCode));
-       
-
-        //gameBoundary = InnerGameBoundary.GetComponent<BoxCollider>().bounds;
-        xGame1 = (GameObject)this.transform.parent.gameObject;
        // Debug.Log(gameBoundary);
-
-#if UNITY_EDITOR
-        // don't hide the cursor 
-        if ( !init ) {
-            OnLevelWasLoaded();
-        }
-#else
-        Cursor.visible = false;
-#endif
-
-        // This GameController persists between scenes
-        DontDestroyOnLoad(gameObject);
         init = true;
-    }
-
-    public void OnLevelWasLoaded() {
-        Debug.Log("**LEVEL LOADED**");
-        gameover = false;
-        //showCredits = false;
-
-        playerLives = init_playerLives;
-        currentLevel = 0;
-        score = 0;
-
-        // destroy all asteroids
-        GameObject[] aster = GameObject.FindGameObjectsWithTag("Asteroid");
-        foreach (GameObject ast in aster) {
-            Destroy(ast);
-        }
-
-        GrabGUI();
-        HyperspaceIn(true); // in the center
         ReinitLevel();
     }
+
+
 
     public void ReinitLevel() {
 
@@ -138,30 +95,26 @@ public class GameController : MonoBehaviour {
 
         currentLevel += 1;
         Debug.Log("Current Level "+currentLevel);
-
         int initialObstacles = Random.Range(4,10);
         Debug.Log("Initializing "+initialObstacles+" asteroids.");
         for (int i = 0; i < initialObstacles; i++) {
-
             // placed anywhere within edges but outside a specified radius from where the player is
             //GameObject.Find("edges");
             // how can I get the params from inside "Edges"?
-            float x, y;
+            float x, z;
             Vector3 delta;
-            do {
-                x = Random.Range(-16, 16);
-                y = Random.Range(-9, 9);
-                delta = player.transform.position - new Vector3(x, 0.0f, y);
-            } while ( delta.magnitude < 5);
+            
+                z = Random.Range(-15, 15);
+                x = Random.Range(-5, 5);
+                delta = player.transform.position - new Vector3(x, 0.0f, z);
+            
 
             AsterInfo info = new AsterInfo();
             info.level = 1;
-            info.position = new Vector3(x, 0.0f, y);
+            info.position = new Vector3(x, 0.0f, z);
             NewAsteroid(info);
         }
-
         levelStartTime = Time.time;
-        ClearGameover();
         UpdateScore(0);
         SpawnSaucerAfterRandomDelay();
     }
@@ -180,70 +133,6 @@ public class GameController : MonoBehaviour {
         return level_saucerAppearanceOdds[idx];
     }
 
-    void GrabGUI() {
-        //Debug.Log(Screen.height);
-
-        int fontsize = Screen.height / 30;
-
-        scoreText = GameObject.Find("ScoreText").GetComponent<Text>();
-        replayText = GameObject.Find("ReplayText").GetComponent<Text>();
-        gameoverText = GameObject.Find("GameoverText").GetComponent<Text>();
-
-        scoreText.fontSize = fontsize;
-        replayText.fontSize = fontsize;
-        gameoverText.fontSize = fontsize*3/2;
-    }
-
-    void Update() {
-
-       /* if ( gameover ) {
-            if (Input.GetKeyDown(KeyCode.Return)) {
-                SceneManager.LoadScene("Scene1");
-            }
-
-            if (Time.time > gameoverTime + 10 && showCredits==false) {   // ********************
-                SceneManager.LoadScene("Credits");
-                showCredits = true;
-            }
-
-        }*/
-        if (Input.GetKeyDown(KeyCode.P)) {
-            if (Time.timeScale == 0.0f ) {
-                Time.timeScale = 1.0f;
-                AudioListener.pause = false;
-                gameoverText.enabled = gameover;
-            }
-            else {
-                Time.timeScale = 0.0f;
-                AudioListener.pause = true;
-                gameoverText.text = "Paused";
-                gameoverText.enabled = true;
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.M)) {
-            // toggle Music
-            GetComponent<AudioSource>().mute = !GetComponent<AudioSource>().mute;
-        }
-    }
-
-
-    void SetGameover() {
-        gameover = true;
-        gameoverTime = Time.time;
-        gameoverText.text = "Game Over!";
-        gameoverText.enabled = true;
-        replayText.text = "'Enter' to restart";
-        replayText.enabled = true;
-        newSaucerAllowed = false;
-    }
-
-    void ClearGameover() {
-        gameover = false;
-        gameoverText.enabled = false;
-        replayText.enabled = false;
-    }
-
-
     void NewAsteroid(AsterInfo info) {
         numAsteroids += 1;
 
@@ -251,10 +140,16 @@ public class GameController : MonoBehaviour {
         GameObject obstacle = Instantiate(
             obstacles[Random.Range(0, obstacles.Length)],
             info.position, Random.rotation) as GameObject;
-      
-        obstacle.transform.parent = xGame1.transform;
+   
+        obstacle.transform.parent = this.transform;
+        obstacle.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         obstacle.transform.localPosition = info.position;
-        obstacle.SendMessage("SetLevel", info.level);
+        float aRand = 25;
+        Vector3 astVel = new Vector3(Random.Range(-aRand, aRand), Random.Range(-aRand, aRand), Random.Range(-aRand, aRand));
+
+        obstacle.GetComponent<Rigidbody>().velocity = astVel;
+        
+      //  obstacle.SendMessage("SetLevel", info.level);
     }
 
     void NewPowerup(AsterInfo info) {
@@ -268,41 +163,8 @@ public class GameController : MonoBehaviour {
 
     }
 
-    void KillPlayer() {
-        playerLives -= 1;
-        UpdateScore(0);
 
-        if (playerLives > 0) {
-            Invoke("Respawn", 2.0f);
-        }
-        else {
-           
-            SetGameover();
-            ReinitLevel();
-        }
-    }
-
-    void Respawn() {
-        if (gameover == false) {
-            HyperspaceIn(false);
-        }
-    }
-
-    void HyperspaceIn(bool center) {
-        // todo add cool effect
-        //GameObject playerShip = GameObject.Find("PlayerShip");
-        player.SendMessage("HyperspaceIn",center);
-    }
-
-    void ExtraLife() {
-        if ( playerLives < max_playerLives ) {
-            playerLives += 1;
-            UpdateScore(0);
-            GameObject.Find("NewLife").GetComponent<AudioSource>().Play();
-        }
-    }
-
-
+    /*
     void MakeExplosion(ExplosionInfo info) {
         GameObject[] objs = GameObject.FindObjectsOfType<GameObject>();
         for (int i=0;i<objs.Length;i++) {
@@ -312,7 +174,7 @@ public class GameController : MonoBehaviour {
             }
         }
     }
-
+    */
     void UpdateScore(int points) {
 
         
@@ -324,35 +186,15 @@ public class GameController : MonoBehaviour {
 
 
         string display = "Score: " + score.ToString();
-        string lives = "";
+
        // Debug.Log("Score:" + score);
 
-#if UNITY_WEBGL
-        if ( playerLives>0 ) {
-            if (playerLives == 1){
-                lives = "1 life";
-            }
-            else {
-                int n = playerLives;
-                lives = n.ToString() + " lives";
-            }
-        }
-#else 
-        // one icon for each REMAINING ship
-        for (int i = 1; i < playerLives; i++) {
-            lives += "▲";
-        }
-#endif
-        scoreText.text = display + "\n " + lives;
+      //  scoreText.text = display + "\n " + lives;
+       // scoreText.text = display + "\n " + lives;
 
-        scoreText.enabled = true;
-        replayText.enabled = false;
+     //   scoreText.enabled = true;
+        //replayText.enabled = false;
 
-       /* while (after > before) {
-            // we've just crossed the bonus score again
-            ExtraLife();
-            before += 1;
-        }*/
     }
 
     void ScoreAsteroid(int astLevel) {
@@ -434,11 +276,11 @@ public class GameController : MonoBehaviour {
             if (sec.Length < 2) sec = "0" + sec;
             convergetime -= 1;
             message = clear + "\nTime bonus " + min + ":" + sec;
-            gameoverText.text = message;
+            //gameoverText.text = message;
             UpdateScore(pts_TimeBonusPerSecond);
             yield return new WaitForSeconds(0.05f);
         }
-        gameoverText.text = message;
+       
         Invoke("ReinitLevel", 3);
     }
 
@@ -446,7 +288,7 @@ public class GameController : MonoBehaviour {
         newSaucerAllowed = false;
 
         int leveltime = (int)(Time.time - levelStartTime);
-        gameoverText.enabled = true;
+       
         StartCoroutine( CountTimeBonus(leveltime,pts_TimeBonusBeforeSeconds) );
     }
 

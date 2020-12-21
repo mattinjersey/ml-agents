@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class SaucerCode : MonoBehaviour {
@@ -49,7 +49,7 @@ public class SaucerCode : MonoBehaviour {
 
         // even narrower for higher levels
         if ( isSmall ) {
-            vary /= ( GameController.currentLevel - 1 );
+           // vary /= ( GameController.currentLevel - 1 );
         }
 
         Instantiate(torpedo, transform.position, Quaternion.Euler(0.0f,angle+vary,0.0f));
@@ -100,12 +100,12 @@ public class SaucerCode : MonoBehaviour {
         Instantiate(explosion,transform.position,Quaternion.identity);
         Destroy(gameObject);
 
-        ExplosionInfo info = new ExplosionInfo();
-        info.origin = transform.position;
-        info.strength = 2.0f;
-        GameObject.Find("GameController").SendMessage("MakeExplosion", info);
+       // ExplosionInfo info = new ExplosionInfo();
+       // info.origin = transform.position;
+       // info.strength = 2.0f;
+     //   GameObject.Find("GameController").SendMessage("MakeExplosion", info);
 
-        GameObject.Find("GameController").SendMessage("ScoreSaucer",isSmall);
+       // GameObject.Find("GameController").SendMessage("ScoreSaucer",isSmall);
     }
 
 

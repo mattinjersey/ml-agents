@@ -17,7 +17,7 @@ public class AsteroidCode : MonoBehaviour {
     private int level;
     private Rigidbody rb;
     private Collider cc;
-    private float outsideCount;
+ //   private float outsideCount;
 
 	// Use this for initialization
 	void Start () {
@@ -33,21 +33,14 @@ public class AsteroidCode : MonoBehaviour {
 	
 	void FixedUpdate () {
         // limit the velocity
-        float speed = Mathf.Clamp(rb.velocity.magnitude, 0.0f, 3.0f);
+        float speed = Mathf.Clamp(rb.velocity.magnitude, 5.0f, 25.0f);
         rb.velocity = rb.velocity.normalized * speed;
-
-        // count how long we are outside the gameBoundary for
-        if (false) //( cc.bounds.Intersects(GameController.gameBoundary) ) {
-        {
-            //outsideCount = 0.0f;
-        }
-        // and direct back inwards if too long
-        else {
-            outsideCount += Time.fixedDeltaTime;
-            if ( outsideCount > 5.0f ) {
-                RedirectInwards();
-            }
-        }
+        float x = rb.velocity.x;
+        float y = rb.velocity.y;
+        float z = rb.velocity.z;
+        rb.velocity = new Vector3(0, y, z);
+        Vector3 aPos = transform.position;
+        transform.position = new Vector3(0, aPos.y, aPos.z);
     }
 
     void RedirectInwards() {
@@ -67,7 +60,7 @@ public class AsteroidCode : MonoBehaviour {
         float y = Mathf.Cos(angle) * speed;
 
         rb.velocity = new Vector3(x, 0.0f, y);
-        outsideCount = 0.0f;
+       
     }
 
     void SetLevel(int n) {
@@ -118,25 +111,25 @@ public class AsteroidCode : MonoBehaviour {
 
     void Explode() {
         // play the correct soundFx
-        ExplosionInfo info = new ExplosionInfo();
-        info.origin = transform.position;
+        //ExplosionInfo info = new ExplosionInfo();
+      //  info.origin = transform.position;
 
         switch (level) {
             case 1:
                 Instantiate(sndLevel1);
-                info.strength = 0.1f;
+             //   info.strength = 0.1f;
                 break;
             case 2:
-                info.strength = 0.1f;
+              //  info.strength = 0.1f;
                 Instantiate(sndLevel2);
                 break;
             case 3:
-                info.strength = 0.1f;
+             //   info.strength = 0.1f;
                 Instantiate(sndLevel3);
                 break;
         }
-        GameObject.Find("GameController").SendMessage("MakeExplosion",info);
-        GameObject.Find("GameController").SendMessage("DecrementAsteroid");
+       // GameObject.Find("GameController").SendMessage("MakeExplosion",info);
+        //GameObject.Find("GameController").SendMessage("DecrementAsteroid");
         Destroy(gameObject);
     }
 
