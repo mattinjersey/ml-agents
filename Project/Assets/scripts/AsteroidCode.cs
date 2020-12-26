@@ -33,7 +33,7 @@ public class AsteroidCode : MonoBehaviour {
 	
 	void FixedUpdate () {
         // limit the velocity
-        float speed = Mathf.Clamp(rb.velocity.magnitude, 5.0f, 25.0f);
+        float speed = Mathf.Clamp(rb.velocity.magnitude, 2f, 25.0f);
         rb.velocity = rb.velocity.normalized * speed;
         float x = rb.velocity.x;
         float y = rb.velocity.y;
@@ -72,33 +72,32 @@ public class AsteroidCode : MonoBehaviour {
         rb = GetComponent<Rigidbody>();
         rb.mass = rb.mass * mult*mult*mult; 
     }
-
+    
     void Break(bool scorePoints) {
-
+        AsterInfo info = new AsterInfo();
+        info.level = level + 1;
+        info.position = transform.position;
+        Debug.Log("asteroid hit. Level:" + level);
         if ( level<3 ) {
-            AsterInfo info = new AsterInfo();
-            info.level = level + 1;
-            info.position = transform.position;
-
+            GameObject g = this.transform.parent.gameObject;
+            Debug.Log(g);
+            g.GetComponent<AsteroidController>().NewAsteroid(info);
+ 
             // break into a number of smaller units (level=level+1)
-            //if (level == 2 && Random.Range(0, 3) < 1) {
-            //    GameObject.Find("GameController").SendMessage("NewAsteroid", info);
-            //    GameObject.Find("GameController").SendMessage("NewAsteroid", info);
-            //    GameObject.Find("GameController").SendMessage("NewPowerup", info);
-            //}
-            //else {
-                GameObject.Find("GameController").SendMessage("NewAsteroid", info);
-                GameObject.Find("GameController").SendMessage("NewAsteroid", info);
-                GameObject.Find("GameController").SendMessage("NewAsteroid", info);
-            //}
+
 
         }
         else {
-            Instantiate(finalExplosion, transform.position, Quaternion.identity);
+           // Instantiate(finalExplosion, transform.position, Quaternion.identity);
         }
 
-        if (scorePoints) GameObject.Find("GameController").SendMessage("ScoreAsteroid", level);
-        Explode();
+        if (scorePoints)
+        {
+            GameObject g;
+            g = this.transform.parent.gameObject;
+            g.GetComponent<AsteroidController>().SendMessage("ScoreAsteroid", info.level);
+        }
+            Explode();
     }
 
     void BreakByPlayer() {
@@ -113,7 +112,7 @@ public class AsteroidCode : MonoBehaviour {
         // play the correct soundFx
         //ExplosionInfo info = new ExplosionInfo();
       //  info.origin = transform.position;
-
+      /*
         switch (level) {
             case 1:
                 Instantiate(sndLevel1);
@@ -128,6 +127,7 @@ public class AsteroidCode : MonoBehaviour {
                 Instantiate(sndLevel3);
                 break;
         }
+      */
        // GameObject.Find("GameController").SendMessage("MakeExplosion",info);
         //GameObject.Find("GameController").SendMessage("DecrementAsteroid");
         Destroy(gameObject);

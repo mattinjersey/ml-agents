@@ -9,11 +9,11 @@ using System.Collections;
 public class AsteroidController : MonoBehaviour {
 
     // SCORING SYSTEM
-    static int pts_AsteroidLarge  = 10;
-    static int pts_AsteroidMedium = 20;
-    static int pts_AsteroidSmall  = 50;
-    static int pts_SaucerLarge = 200;
-    static int pts_SaucerSmall = 500;
+    static float pts_AsteroidLarge  = .10f;
+    static float pts_AsteroidMedium = .10f;
+    static float pts_AsteroidSmall  = .10f;
+    static float pts_SaucerLarge = .0200f;
+    static float pts_SaucerSmall = .0500f;
     public GameObject xGame1;
     static int pts_TimeBonusBeforeSeconds = 180;
     static int pts_TimeBonusPerSecond = 10;
@@ -95,23 +95,31 @@ public class AsteroidController : MonoBehaviour {
 
         currentLevel += 1;
         Debug.Log("Current Level "+currentLevel);
-        int initialObstacles = Random.Range(4,10);
+        int initialObstacles = Random.Range(4,6);
         Debug.Log("Initializing "+initialObstacles+" asteroids.");
         for (int i = 0; i < initialObstacles; i++) {
             // placed anywhere within edges but outside a specified radius from where the player is
             //GameObject.Find("edges");
             // how can I get the params from inside "Edges"?
-            float x, z;
-            Vector3 delta;
-            
+            float x = 0;
+            float z=0;
+            bool keepGoing = true;
+            while (keepGoing )
+
+            {
+                Vector3 delta;
                 z = Random.Range(-15, 15);
                 x = Random.Range(-5, 5);
-                delta = player.transform.position - new Vector3(x, 0.0f, z);
-            
-
+                delta = player.transform.position - new Vector3(0, x, z);
+                if (delta.magnitude>10)
+                    {
+                    keepGoing = false;
+                }
+            }
             AsterInfo info = new AsterInfo();
             info.level = 1;
-            info.position = new Vector3(x, 0.0f, z);
+            info.position = new Vector3(0, x, z);
+            //Debug.Log("new asteroid. x:" +x+ "   z:" + z);
             NewAsteroid(info);
         }
         levelStartTime = Time.time;
@@ -125,6 +133,7 @@ public class AsteroidController : MonoBehaviour {
         if (idx >= len) return level_numAsteroids[len - 1];
         return level_numAsteroids[idx];
     }
+    
 
     int[] getSaucerOddsByLevel(int level) {
         int idx = level - 1;
@@ -133,23 +142,37 @@ public class AsteroidController : MonoBehaviour {
         return level_saucerAppearanceOdds[idx];
     }
 
-    void NewAsteroid(AsterInfo info) {
-        numAsteroids += 1;
+    public void NewAsteroid(AsterInfo info) {
+        int aCount = 0;
+        if (info.level == 1)
+        {
+            aCount =1;
+        }
+        else
+        {
+            aCount =2;
+        }
+        numAsteroids += aCount;
+        for (int bCount = 0; bCount < aCount; bCount++)
+        {
+            // random motion is imparted when the new obstacle calls Start()
+            
+            GameObject obstacle = Instantiate(
+                obstacles[Random.Range(0, obstacles.Length)],
+                info.position, Random.rotation) as GameObject;
 
-        // random motion is imparted when the new obstacle calls Start()
-        GameObject obstacle = Instantiate(
-            obstacles[Random.Range(0, obstacles.Length)],
-            info.position, Random.rotation) as GameObject;
-   
-        obstacle.transform.parent = this.transform;
-        obstacle.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-        obstacle.transform.localPosition = info.position;
-        float aRand = 25;
-        Vector3 astVel = new Vector3(Random.Range(-aRand, aRand), Random.Range(-aRand, aRand), Random.Range(-aRand, aRand));
+            obstacle.transform.parent = this.transform;
+            float aScale = 0.1f;
+            obstacle.transform.localScale = new Vector3(aScale, aScale, aScale);
+            obstacle.transform.position = info.position;
+            float aRand =5f*info.level;
+           // float aRand = 25;
+            Vector3 astVel = new Vector3(Random.Range(-aRand, aRand), Random.Range(-aRand, aRand), Random.Range(-aRand, aRand));
 
-        obstacle.GetComponent<Rigidbody>().velocity = astVel;
-        
-      //  obstacle.SendMessage("SetLevel", info.level);
+            obstacle.GetComponent<Rigidbody>().velocity = astVel;
+
+            obstacle.SendMessage("SetLevel", info.level);
+        }
     }
 
     void NewPowerup(AsterInfo info) {
@@ -175,17 +198,17 @@ public class AsteroidController : MonoBehaviour {
         }
     }
     */
-    void UpdateScore(int points) {
+    void UpdateScore(float points) {
 
         
-        //long before = score / bonus_every;
-        refVehicle.xAddReward(points*0.01f);
+        //long before = score / bonus_every;  
         // score += points;
         score = refVehicle.ShowReward();
-       // long after = score / bonus_every;
-
+        // long after = score / bonus_every;
+        refVehicle.xAddReward(points);
 
         string display = "Score: " + score.ToString();
+        Debug.Log("points:" + points);
 
        // Debug.Log("Score:" + score);
 

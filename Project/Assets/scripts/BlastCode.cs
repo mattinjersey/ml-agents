@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class BlastCode : MonoBehaviour {
@@ -16,14 +16,19 @@ public class BlastCode : MonoBehaviour {
         transform.position = position + transform.forward * speed*Time.fixedDeltaTime;
 	}
 
-    void OnTriggerEnter(Collider other) {
+    void OnCollisionEnter(Collision other) {
         if ( other.gameObject.CompareTag("Asteroid") ) {
             other.gameObject.SendMessage("BreakByPlayer");
             //remove this bullet
             Destroy(gameObject);
             return;
         }
-
+        if (other.gameObject.CompareTag("wall"))
+        {
+          
+            Destroy(gameObject);
+            return;
+        }
         if ( other.gameObject.CompareTag("Saucer") ) {
             other.gameObject.SendMessage("PlayerBlast");
             //remove this bullet

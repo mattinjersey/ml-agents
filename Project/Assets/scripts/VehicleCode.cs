@@ -2,8 +2,10 @@ using UnityEngine;
 using System.Collections;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents;
+using TMPro;
 using Unity.MLAgents.Actuators;
 using System;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 public class VehicleCode : Agent
 {
@@ -22,15 +24,14 @@ public class VehicleCode : Agent
     public Vector3 aVel;
     private Rigidbody rb;
     private float heading;
-
+    private float bigScore = 0;
     private float turn;
     private float move;
-
+    public TextMeshProUGUI scoreText;
     private double nextShotTime;
     private bool isAlive;
     private int hasTrishots;
-    private int hasShields;
-
+    
     EnvironmentParameters m_ResetParams;
 
 
@@ -45,6 +46,9 @@ public class VehicleCode : Agent
         m_ResetParams = Academy.Instance.EnvironmentParameters;
         SetResetParameters();
         Debug.Log("Initialize");
+        //scoreText =  this.transform.parent.gameObject.transform.Find("aCanvas").GetComponent<Text>();
+        Debug.Log("scoreText:"+scoreText);
+        scoreText.text = "Score: 0";
     }
     public override void CollectObservations(VectorSensor sensor)
     {
@@ -66,7 +70,7 @@ public class VehicleCode : Agent
         float velocity = Mathf.Clamp(rb.velocity.magnitude, 0f, moveMax * transform.lossyScale.y);
         if (rb.velocity.magnitude > moveMax)
         {
-            Debug.Log("constrain velocity");
+            //Debug.Log("constrain velocity");
             rb.velocity = rb.velocity.normalized * moveMax;
         }
         int aMove = 0, aTurn = 0;
@@ -178,11 +182,11 @@ public class VehicleCode : Agent
         heading += turnForce * (float)aTurn;
         if (Mathf.Abs(aMove) > 0.00001f)
         {
-            Debug.Log("moving!");
+            //Debug.Log("moving!");
         }
         if (Mathf.Abs(aTurn) > 0.00001f)
         {
-            Debug.Log("turining!");
+           // Debug.Log("turining!");
         }
         float aMag = (transform.forward * moveForce * (float)aMove).magnitude;
         if (aMag > 1f)
@@ -217,14 +221,16 @@ public class VehicleCode : Agent
         }
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Collision Trigger !");
+        GameObject other = collision.gameObject;
+        Debug.Log("Collision found ! isAlive:"+isAlive);
         if (isAlive)
         {
             // I've crashed into something
             if (other.gameObject.CompareTag("Asteroid"))
             {
+                Debug.Log("asteroid collision!");
                 Explode();
             }
 
@@ -253,33 +259,7 @@ public class VehicleCode : Agent
                }*/
         }
     }
-    /* 
-        void OnCollisionEnter(Collision other)
-         {
-         Debug.Log("Collision OnCollision !");
-         if (other.gameObject.CompareTag("wall"))
-             {
-                 Debug.Log("hit wall !");
-                 if (other.gameObject.name=="bottomBorder" | other.gameObject.name == "topBorder")
-                 {
-                     Debug.Log("bottom or top wall !");
-                     Vector3 newVelocity= new Vector3( rb.velocity.x, rb.velocity.y, -1.0f * rb.velocity.z);
-                    // rb.AddForce(newVelocity - rb.velocity, ForceMode.VelocityChange);
-                 }
-                else
-                 {
-                     Debug.Log("right or left wall !");
-                     Vector3 newVelocity = new Vector3( rb.velocity.x, rb.velocity.y, -1.0f * rb.velocity.z);
-                 Debug.Log("newVelocity:" + newVelocity);
-               //  rb.velocity = newVelocity;
-                 }
-                 rb.transform.Rotate(0, 180f, 0);
-             }
-             if (other.gameObject.CompareTag("Powerup")) {
-                 ApplyPowerup(other.gameObject);
-             }    
-         }
-     */
+   
     public void SetResetParameters()
     {
         myReward = 0f;
@@ -304,16 +284,15 @@ public class VehicleCode : Agent
         {
             hasTrishots = 12;
         }
-        if (code.type == "Shield")
-        {
-            hasShields = 3;
-            shields.SetActive(true);
-        }
+     
         Destroy(powerup);
     }
     public void xAddReward(float inScore)
     {
         myReward += inScore;
+        bigScore += inScore;
+        Debug.Log("bigScore:" + bigScore + "   inScore:" + inScore);
+        scoreText.text = "Score: " + bigScore*100f;
     }
     public float ShowReward()
     {
@@ -321,19 +300,9 @@ public class VehicleCode : Agent
     }
     void Explode()
     {
-        if (hasShields > 0)
-        {
-            hasShields -= 1;
-            xAddReward(-.1f);
-            if (hasShields < 1)
-            {
-                shields.SetActive(false);
-            }
-        }
-        else
-        {
+        
             hasTrishots = 0;
-            hasShields = 0;
+          
 
             GameObject a4 = Instantiate(explosion, transform.position, Quaternion.identity);
             a4.transform.parent = xGame1.transform;
@@ -341,7 +310,7 @@ public class VehicleCode : Agent
             xAddReward(-1f);
             killPlayer = true;
 
-        }
+        
     }
 
     void HyperspaceJump()
