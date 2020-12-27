@@ -27,28 +27,27 @@ public class VehicleCode : Agent
     private float bigScore = 0;
     private float turn;
     private float move;
-    public TextMeshProUGUI scoreText;
+    public TextMesh scoreText;
     private double nextShotTime;
     private bool isAlive;
     private int hasTrishots;
-    
+    AsteroidController gController;
     EnvironmentParameters m_ResetParams;
 
 
     public override void Initialize()
     {
+        rb = GetComponent<Rigidbody>();
         isAlive = true;
         xGame1 = (GameObject)this.transform.parent.gameObject;
-        rb = GetComponent<Rigidbody>();
-        heading = 0;
+        gController = xGame1.GetComponent<AsteroidController>();
         // Show();
         nextShotTime = Time.time;
         m_ResetParams = Academy.Instance.EnvironmentParameters;
         SetResetParameters();
         Debug.Log(this.transform.parent.name+"...Initialize");
         //scoreText =  this.transform.parent.gameObject.transform.Find("aCanvas").GetComponent<Text>();
-        Debug.Log("scoreText:"+scoreText);
-        scoreText.text = "Score: 0";
+       
     }
     public override void CollectObservations(VectorSensor sensor)
     {
@@ -129,12 +128,25 @@ public class VehicleCode : Agent
 
         }
     }
+    public void xSetKillPlayer()
+    {
+        killPlayer = true;
+    }
     public override void OnEpisodeBegin()
     {
         SetResetParameters();
+        myReward = 0f;
+        killPlayer = false;
+        rb.velocity = new Vector3(0f, 0f, 0f);
+        Debug.Log("reset velocity");
+        engine.SetActive(false);
+        gController.ReinitLevel();
+        heading = 0;
+        Debug.Log("scoreText:" + scoreText);
+        scoreText.text = "Score: 0";
+        //GetComponent<Rigidbody>().rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+        bigScore = 0;
         Debug.Log("OnEpisodeBegin");
-        // gc.ReinitLevel();
-        // GameObject.Find("GameController").SendMessage("OnLevelWasLoaded");
     }
     public override void Heuristic(in ActionBuffers actionsOut)
     {
@@ -222,7 +234,7 @@ public class VehicleCode : Agent
             }
         }
     }
-
+    
     void OnCollisionEnter(Collision collision)
     {
         GameObject other = collision.gameObject;
@@ -247,13 +259,7 @@ public class VehicleCode : Agent
    
     public void SetResetParameters()
     {
-        myReward = 0f;
-        killPlayer = false;
-        rb.velocity = new Vector3(0f, 0f, 0f);
-        Debug.Log("reset velocity");
-        engine.SetActive(false);
-        //GetComponent<Rigidbody>().rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
-
+       
     }
     void ApplyPowerup(GameObject powerup)
     {
@@ -277,7 +283,7 @@ public class VehicleCode : Agent
         myReward += inScore;
         bigScore += inScore;
         Debug.Log("bigScore:" + bigScore + "   inScore:" + inScore);
-        scoreText.text = "Score: " + bigScore*100f;
+        scoreText.text = "Score: " + (int)(bigScore*100f);
     }
     public float ShowReward()
     {

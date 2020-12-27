@@ -77,8 +77,14 @@ public class TorpedoCode : MonoBehaviour {
         }
 
         if (other.gameObject.CompareTag("Player")) {
-            other.gameObject.SendMessage("Explode");
+            other.gameObject.SendMessage("xSetKillPlayer");
             //remove this bullet
+            Destroy(gameObject);
+            return;
+        }
+        if (other.gameObject.CompareTag("wall"))
+        {
+
             Destroy(gameObject);
             return;
         }

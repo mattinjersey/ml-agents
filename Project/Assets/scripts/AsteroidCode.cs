@@ -80,12 +80,8 @@ public class AsteroidCode : MonoBehaviour {
         Debug.Log("asteroid hit. Level:" + level);
         if ( level<3 ) {
             GameObject g = this.transform.parent.gameObject;
-            Debug.Log(g);
+            //Debug.Log(g);
             g.GetComponent<AsteroidController>().NewAsteroid(info);
- 
-            // break into a number of smaller units (level=level+1)
-
-
         }
         else {
            // Instantiate(finalExplosion, transform.position, Quaternion.identity);
@@ -95,7 +91,7 @@ public class AsteroidCode : MonoBehaviour {
         {
             GameObject g;
             g = this.transform.parent.gameObject;
-            g.GetComponent<AsteroidController>().SendMessage("ScoreAsteroid", info.level);
+            g.GetComponent<AsteroidController>().SendMessage("ScoreAsteroid", info.level-1);
         }
             Explode();
     }
@@ -110,7 +106,10 @@ public class AsteroidCode : MonoBehaviour {
 
     void Explode() {
 
-     //   Debug.Log("destroy asteroid..." + this.transform.parent.name);
+        //   Debug.Log("destroy asteroid..." + this.transform.parent.name);
+        AsteroidController g;
+        g = this.transform.parent.gameObject.GetComponent<AsteroidController>();
+        g.DecrementAsteroid();
         Destroy(gameObject);
     }
 

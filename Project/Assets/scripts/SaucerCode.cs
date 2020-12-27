@@ -33,7 +33,7 @@ public class SaucerCode : MonoBehaviour {
         }
         rb.velocity = astVel;
         // decide where to start
-        StartAtRandomEdge();
+       // StartAtRandomEdge();
         Invoke("Shoot", 1.5f);
     }
 

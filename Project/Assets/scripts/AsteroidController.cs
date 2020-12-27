@@ -72,7 +72,7 @@ public class AsteroidController : MonoBehaviour {
         refVehicle = (VehicleCode)player.GetComponent(typeof(VehicleCode));
        // Debug.Log(gameBoundary);
         init = true;
-        ReinitLevel();
+        //ReinitLevel();
     }
 
 
@@ -161,17 +161,22 @@ public class AsteroidController : MonoBehaviour {
         for (int bCount = 0; bCount < aCount; bCount++)
         {
             // random motion is imparted when the new obstacle calls Start()
-            
-            GameObject obstacle = Instantiate(
+            Vector3 aOffset = new Vector3(0, 0, 0);
+           if (info.level==1)
+            {
+                aOffset = transform.position;
+            }
+                GameObject obstacle = Instantiate(
                 obstacles[Random.Range(0, obstacles.Length)],
-                info.position+transform.position, Random.rotation) as GameObject;
+                info.position + aOffset, Random.rotation) as GameObject;
+            
 
             obstacle.transform.parent = this.transform;
             obstacle.name = this.transform.name + "Asteroid"+ numAsteroids;
             Debug.Log(this.name+"...initialize asteroid...parent:"+this.transform);
             float aScale = 0.1f;
             obstacle.transform.localScale = new Vector3(aScale, aScale, aScale);
-            obstacle.transform.position = info.position+transform.position;
+            obstacle.transform.position = info.position + aOffset;
             float aRand =5f*info.level;
            // float aRand = 25;
             Vector3 astVel = new Vector3(Random.Range(-aRand, aRand), Random.Range(-aRand, aRand), Random.Range(-aRand, aRand));
@@ -241,10 +246,14 @@ public class AsteroidController : MonoBehaviour {
         }
     }
 
-    void DecrementAsteroid() {
+    public void DecrementAsteroid() {
         numAsteroids -= 1;
         // if saucer is allowed that means its not here
-        if (numAsteroids == 0 ) LevelCleared();
+        if (numAsteroids == 0) // reset game
+        {
+            ReinitLevel();
+        }
+        Debug.Log("num asteroids" + numAsteroids);
     }
 
     void ScoreSaucer(bool isSmall) {
@@ -294,7 +303,10 @@ public class AsteroidController : MonoBehaviour {
                 saucer = saucerSmall;
             }
             GameObject aSaucer=Instantiate(saucer);
+            float z = Random.Range(-15, 15);
+            float  x = Random.Range(-5, 5);
             aSaucer.transform.parent = this.transform;
+            aSaucer.transform.position = new Vector3(0, x, z)+transform.position;
             //newSaucerAllowed = false;
             float aRand = 5f ;
             Vector3 astVel = new Vector3(Random.Range(-aRand, aRand), Random.Range(-aRand, aRand), Random.Range(-aRand, aRand));
