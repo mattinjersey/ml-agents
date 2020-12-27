@@ -109,27 +109,8 @@ public class AsteroidCode : MonoBehaviour {
     }
 
     void Explode() {
-        // play the correct soundFx
-        //ExplosionInfo info = new ExplosionInfo();
-      //  info.origin = transform.position;
-      /*
-        switch (level) {
-            case 1:
-                Instantiate(sndLevel1);
-             //   info.strength = 0.1f;
-                break;
-            case 2:
-              //  info.strength = 0.1f;
-                Instantiate(sndLevel2);
-                break;
-            case 3:
-             //   info.strength = 0.1f;
-                Instantiate(sndLevel3);
-                break;
-        }
-      */
-       // GameObject.Find("GameController").SendMessage("MakeExplosion",info);
-        //GameObject.Find("GameController").SendMessage("DecrementAsteroid");
+
+     //   Debug.Log("destroy asteroid..." + this.transform.parent.name);
         Destroy(gameObject);
     }
 

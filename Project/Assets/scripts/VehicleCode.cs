@@ -45,7 +45,7 @@ public class VehicleCode : Agent
         nextShotTime = Time.time;
         m_ResetParams = Academy.Instance.EnvironmentParameters;
         SetResetParameters();
-        Debug.Log("Initialize");
+        Debug.Log(this.transform.parent.name+"...Initialize");
         //scoreText =  this.transform.parent.gameObject.transform.Find("aCanvas").GetComponent<Text>();
         Debug.Log("scoreText:"+scoreText);
         scoreText.text = "Score: 0";
@@ -60,6 +60,8 @@ public class VehicleCode : Agent
     private void Update()
     {
         RequestDecision();
+        Vector3 aPos = transform.position;
+        transform.position = new Vector3(0, aPos.y, aPos.z);
     }
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
@@ -239,24 +241,7 @@ public class VehicleCode : Agent
                 other.gameObject.SendMessage("PlayerBlast");
                 Explode();
             }
-            /*   if (other.gameObject.CompareTag("wall"))
-               {
-                   Debug.Log("hit wall !");
-                   if (other.gameObject.name == "bottomBorder" | other.gameObject.name == "topBorder")
-                   {
-                       Debug.Log("bottom or top wall !");
-                       Vector3 newVelocity = new Vector3(rb.velocity.x, rb.velocity.y, -1.0f * rb.velocity.z);
-                       // rb.AddForce(newVelocity - rb.velocity, ForceMode.VelocityChange);
-                   }
-                   else
-                   {
-                       Debug.Log("right or left wall !");
-                       Vector3 newVelocity = new Vector3(rb.velocity.x, rb.velocity.y, -1.0f * rb.velocity.z);
-                       Debug.Log("newVelocity:" + newVelocity);
-                        rb.velocity = newVelocity;
-                   }
-                   rb.transform.Rotate(0, 180f, 0);
-               }*/
+       
         }
     }
    

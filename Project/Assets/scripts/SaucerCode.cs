@@ -18,9 +18,20 @@ public class SaucerCode : MonoBehaviour {
     // Use this for initialization
     void Start () {
         rb = GetComponent<Rigidbody>();
-        rb.angularVelocity = new Vector3(0.0f, 0.0f, 6.0f);
-        rb.transform.rotation = Quaternion.Euler(spin, 0.0f, 0.0f);
-
+       // rb.angularVelocity = new Vector3(0.0f, 0.0f, 6.0f);
+        rb.transform.rotation = Quaternion.Euler(spin+90f, 0.0f, 0.0f);
+        float aRand = 5f;
+        bool keepGoing = true;
+        Vector3 astVel = new Vector3(Random.Range(-aRand, aRand), 0, Random.Range(-aRand, aRand));
+        while (keepGoing)
+        {
+            astVel = new Vector3(Random.Range(-aRand, aRand), 0, Random.Range(-aRand, aRand));
+            if (astVel.magnitude>5f)
+            {
+                keepGoing = false;
+            }
+        }
+        rb.velocity = astVel;
         // decide where to start
         StartAtRandomEdge();
         Invoke("Shoot", 1.5f);
@@ -32,8 +43,10 @@ public class SaucerCode : MonoBehaviour {
         float wobx = Mathf.Cos(wobble);
         float woby = Mathf.Sin(wobble);
 
-        transform.position = transform.position + vector*Time.fixedDeltaTime;
-        transform.rotation = Quaternion.Euler(15.0f*wobx, 15.0f*woby, turn);
+       // transform.position = transform.position + vector*Time.fixedDeltaTime;
+        //transform.rotation = Quaternion.Euler(90f+15.0f*wobx, 15.0f*woby, turn);
+        Vector3 aPos = transform.position;
+        transform.position = new Vector3(0, aPos.y, aPos.z);
     }
 
     void Shoot() {
@@ -93,6 +106,27 @@ public class SaucerCode : MonoBehaviour {
 
         // change again shortly
         Invoke("ChangeVector", Random.Range(0.8f, 3.0f));
+    }
+    void OnCollisionEnter(Collision collision)
+    {
+        GameObject other = collision.gameObject;
+            // I've crashed into something
+            if (other.gameObject.CompareTag("Asteroid"))
+            {
+                Debug.Log("asteroid collision!");
+                Explode();
+            }
+
+            if (other.gameObject.CompareTag("Player"))
+            {
+                Explode();
+            }
+    }
+    void Explode()
+    {
+        Instantiate(explosion, transform.position, Quaternion.identity);
+        this.transform.parent.gameObject.GetComponent<AsteroidController>().SendMessage("KillSaucer", true);
+        Destroy(gameObject);
     }
 
     void PlayerBlast() {

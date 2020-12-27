@@ -12,9 +12,8 @@ public class AsteroidController : MonoBehaviour {
     static float pts_AsteroidLarge  = .10f;
     static float pts_AsteroidMedium = .10f;
     static float pts_AsteroidSmall  = .10f;
-    static float pts_SaucerLarge = .0200f;
-    static float pts_SaucerSmall = .0500f;
-    public GameObject xGame1;
+    static float pts_SaucerLarge = .500f;
+    static float pts_SaucerSmall = .500f;
     static int pts_TimeBonusBeforeSeconds = 180;
     static int pts_TimeBonusPerSecond = 10;
 
@@ -83,12 +82,18 @@ public class AsteroidController : MonoBehaviour {
         GameObject[] aster = GameObject.FindGameObjectsWithTag("Asteroid");
         foreach (GameObject ast in aster)
         {
-            Destroy(ast);
+            if (ast.transform.parent == this.transform)
+            {
+                Destroy(ast);
+            }
         }
         GameObject[] saucer = GameObject.FindGameObjectsWithTag("Saucer");
         foreach (GameObject ast in saucer)
         {
-            Destroy(ast);
+            if (ast.transform.parent == this.transform)
+            {
+                Destroy(ast);
+            }
         }
         numAsteroids = 0;
         newSaucerAllowed = true;
@@ -96,7 +101,7 @@ public class AsteroidController : MonoBehaviour {
         currentLevel += 1;
         Debug.Log("Current Level "+currentLevel);
         int initialObstacles = Random.Range(4,6);
-        Debug.Log("Initializing "+initialObstacles+" asteroids.");
+        Debug.Log(this.name+"...Initializing "+initialObstacles+" asteroids.");
         for (int i = 0; i < initialObstacles; i++) {
             // placed anywhere within edges but outside a specified radius from where the player is
             //GameObject.Find("edges");
@@ -159,12 +164,14 @@ public class AsteroidController : MonoBehaviour {
             
             GameObject obstacle = Instantiate(
                 obstacles[Random.Range(0, obstacles.Length)],
-                info.position, Random.rotation) as GameObject;
+                info.position+transform.position, Random.rotation) as GameObject;
 
             obstacle.transform.parent = this.transform;
+            obstacle.name = this.transform.name + "Asteroid"+ numAsteroids;
+            Debug.Log(this.name+"...initialize asteroid...parent:"+this.transform);
             float aScale = 0.1f;
             obstacle.transform.localScale = new Vector3(aScale, aScale, aScale);
-            obstacle.transform.position = info.position;
+            obstacle.transform.position = info.position+transform.position;
             float aRand =5f*info.level;
            // float aRand = 25;
             Vector3 astVel = new Vector3(Random.Range(-aRand, aRand), Random.Range(-aRand, aRand), Random.Range(-aRand, aRand));
@@ -182,7 +189,7 @@ public class AsteroidController : MonoBehaviour {
         GameObject a1=Instantiate(
             powerups[Random.Range(0, powerups.Length)],
             info.position, Random.rotation);
-        a1.transform.parent = xGame1.transform;
+        a1.transform.parent = this.transform;
 
     }
 
@@ -237,7 +244,7 @@ public class AsteroidController : MonoBehaviour {
     void DecrementAsteroid() {
         numAsteroids -= 1;
         // if saucer is allowed that means its not here
-        if (numAsteroids == 0 && newSaucerAllowed == true) LevelCleared();
+        if (numAsteroids == 0 ) LevelCleared();
     }
 
     void ScoreSaucer(bool isSmall) {
@@ -261,10 +268,13 @@ public class AsteroidController : MonoBehaviour {
 
     void SpawnSaucerAfterRandomDelay() {
         // ater a random time, spawn a saucer
-        float wait = 30.0f * Random.Range(1.0f, 2.0f) / Mathf.Pow(currentLevel,0.3f);
+        float wait = 15.0f * Random.Range(1.0f, 2.0f) / Mathf.Pow(currentLevel,0.3f);
         Invoke("SpawnSaucer", wait);
     }
-
+    public void KillSaucer()
+    {
+        SpawnSaucerAfterRandomDelay();
+    }
     void SpawnSaucer() {
         if (newSaucerAllowed == false) return;
 
@@ -284,8 +294,12 @@ public class AsteroidController : MonoBehaviour {
                 saucer = saucerSmall;
             }
             GameObject aSaucer=Instantiate(saucer);
-            aSaucer.transform.parent = xGame1.transform;
-            newSaucerAllowed = false;
+            aSaucer.transform.parent = this.transform;
+            //newSaucerAllowed = false;
+            float aRand = 5f ;
+            Vector3 astVel = new Vector3(Random.Range(-aRand, aRand), Random.Range(-aRand, aRand), Random.Range(-aRand, aRand));
+
+            aSaucer.GetComponent<Rigidbody>().velocity = astVel;
         }
     }
 
@@ -308,7 +322,7 @@ public class AsteroidController : MonoBehaviour {
     }
 
     void LevelCleared() {
-        newSaucerAllowed = false;
+       // newSaucerAllowed = false;
 
         int leveltime = (int)(Time.time - levelStartTime);
        

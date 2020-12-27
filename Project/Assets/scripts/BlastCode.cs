@@ -2,12 +2,13 @@ using UnityEngine;
 using System.Collections;
 
 public class BlastCode : MonoBehaviour {
-
+    public GameObject playerShip;
     private float speed;
 
 	// Use this for initialization
 	void Start () {
         speed = 30.0f*transform.lossyScale.y;
+    
 	}
 	
 	// Update is called once per frame
@@ -31,6 +32,7 @@ public class BlastCode : MonoBehaviour {
         }
         if ( other.gameObject.CompareTag("Saucer") ) {
             other.gameObject.SendMessage("PlayerBlast");
+            this.transform.parent.gameObject.GetComponent<AsteroidController>().SendMessage("ScoreSaucer", true); 
             //remove this bullet
             Destroy(gameObject);
             return;

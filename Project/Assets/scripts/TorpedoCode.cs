@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class TorpedoCode : MonoBehaviour {
@@ -76,7 +76,7 @@ public class TorpedoCode : MonoBehaviour {
             return;
         }
 
-        if (other.gameObject.CompareTag("playerShip")) {
+        if (other.gameObject.CompareTag("Player")) {
             other.gameObject.SendMessage("Explode");
             //remove this bullet
             Destroy(gameObject);
