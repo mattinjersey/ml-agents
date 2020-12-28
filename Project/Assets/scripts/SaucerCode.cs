@@ -19,7 +19,7 @@ public class SaucerCode : MonoBehaviour {
     void Start () {
         rb = GetComponent<Rigidbody>();
        // rb.angularVelocity = new Vector3(0.0f, 0.0f, 6.0f);
-        rb.transform.rotation = Quaternion.Euler(spin+90f, 0.0f, 0.0f);
+        rb.transform.rotation = Quaternion.Euler(spin, 0.0f, 0.0f);
         float aRand = 5f;
         bool keepGoing = true;
         Vector3 astVel = new Vector3(Random.Range(-aRand, aRand), 0, Random.Range(-aRand, aRand));
@@ -46,7 +46,7 @@ public class SaucerCode : MonoBehaviour {
        // transform.position = transform.position + vector*Time.fixedDeltaTime;
         //transform.rotation = Quaternion.Euler(90f+15.0f*wobx, 15.0f*woby, turn);
         Vector3 aPos = transform.position;
-        transform.position = new Vector3(0, aPos.y, aPos.z);
+        transform.position = new Vector3(aPos.x, 0, aPos.z);
     }
 
     void Shoot() {

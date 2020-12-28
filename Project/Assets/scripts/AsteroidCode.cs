@@ -38,9 +38,9 @@ public class AsteroidCode : MonoBehaviour {
         float x = rb.velocity.x;
         float y = rb.velocity.y;
         float z = rb.velocity.z;
-        rb.velocity = new Vector3(0, y, z);
+        rb.velocity = new Vector3(x, 0, z);
         Vector3 aPos = transform.position;
-        transform.position = new Vector3(0, aPos.y, aPos.z);
+        transform.position = new Vector3(aPos.x, 0,aPos.z);
     }
 
     void RedirectInwards() {

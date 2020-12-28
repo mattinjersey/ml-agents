@@ -27,7 +27,7 @@ namespace Unity.MLAgents.Extensions.Sensors
         [Tooltip("The width of each grid cell")]
         [Range(0.05f, 1000f)]
         public float CellScaleX = 1f;
-
+        public Vector3 deltaX;
         /// <summary>
         /// The depth of each grid cell.
         /// </summary>
@@ -547,7 +547,7 @@ namespace Unity.MLAgents.Extensions.Sensors
                     }
                     else
                     {
-                        cellCenter = transform.position + CellPoints[cellIndex];
+                        cellCenter = deltaX + CellPoints[cellIndex];
                         foundColliders = Physics.OverlapBox(cellCenter, halfCellScale, Quaternion.identity, ObserveMask);
                     }
 

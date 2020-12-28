@@ -45,9 +45,9 @@ public class VehicleCode : Agent
         nextShotTime = Time.time;
         m_ResetParams = Academy.Instance.EnvironmentParameters;
         SetResetParameters();
-        Debug.Log(this.transform.parent.name+"...Initialize");
+        Debug.Log(this.transform.parent.name + "...Initialize");
         //scoreText =  this.transform.parent.gameObject.transform.Find("aCanvas").GetComponent<Text>();
-       
+
     }
     public override void CollectObservations(VectorSensor sensor)
     {
@@ -60,7 +60,11 @@ public class VehicleCode : Agent
     {
         RequestDecision();
         Vector3 aPos = transform.position;
-        transform.position = new Vector3(0, aPos.y, aPos.z);
+        transform.position = new Vector3(aPos.x, 0, aPos.z);
+        float x = rb.velocity.x;
+        float y = rb.velocity.y;
+        float z = rb.velocity.z;
+        rb.velocity = new Vector3(x, 0, z);
     }
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
@@ -102,7 +106,7 @@ public class VehicleCode : Agent
             aTurn = 1;
         }
         Vector3 aVel = rb.velocity;
-        aVel.x = 0f;
+        aVel.y = 0f;
         rb.velocity = aVel;
         Vector3 bRot = rb.transform.localRotation.eulerAngles;
         bRot.x = 0; bRot.z = 0;
@@ -114,9 +118,9 @@ public class VehicleCode : Agent
         myReward = 0f;
         if (killPlayer)
         {
-           // ExplosionInfo info = new ExplosionInfo();
-         //   info.origin = transform.position;
-         //   info.strength = 1.0f;
+            // ExplosionInfo info = new ExplosionInfo();
+            //   info.origin = transform.position;
+            //   info.strength = 1.0f;
             //gc.SendMessage("MakeExplosion", info);
             EndEpisode();
             Debug.Log("End episode");
@@ -164,11 +168,7 @@ public class VehicleCode : Agent
                 ContinousOut[0] = 0.1f;
                 // Debug.Log("fire!");
             }
-            /* ContinousOut[1] = 0;
-             if (Input.GetKeyDown(KeyCode.Space))
-             {
-                 ContinousOut[1] = .2f;
-             }*/
+           
             ContinousOut[1] = 0;
             if (move > 0)
             {
@@ -200,7 +200,7 @@ public class VehicleCode : Agent
         }
         if (Mathf.Abs(aTurn) > 0.00001f)
         {
-           // Debug.Log("turining!");
+            // Debug.Log("turining!");
         }
         float aMag = (transform.forward * moveForce * (float)aMove).magnitude;
         if (aMag > 1f)
@@ -234,11 +234,11 @@ public class VehicleCode : Agent
             }
         }
     }
-    
+
     void OnCollisionEnter(Collision collision)
     {
         GameObject other = collision.gameObject;
-        Debug.Log("Collision found ! isAlive:"+isAlive);
+        Debug.Log("Collision found ! isAlive:" + isAlive);
         if (isAlive)
         {
             // I've crashed into something
@@ -253,13 +253,13 @@ public class VehicleCode : Agent
                 other.gameObject.SendMessage("PlayerBlast");
                 Explode();
             }
-       
+
         }
     }
-   
+
     public void SetResetParameters()
     {
-       
+
     }
     void ApplyPowerup(GameObject powerup)
     {
@@ -275,7 +275,7 @@ public class VehicleCode : Agent
         {
             hasTrishots = 12;
         }
-     
+
         Destroy(powerup);
     }
     public void xAddReward(float inScore)
@@ -283,7 +283,7 @@ public class VehicleCode : Agent
         myReward += inScore;
         bigScore += inScore;
         Debug.Log("bigScore:" + bigScore + "   inScore:" + inScore);
-        scoreText.text = "Score: " + (int)(bigScore*100f);
+        scoreText.text = "Score: " + (int)(bigScore * 100f);
     }
     public float ShowReward()
     {
@@ -291,17 +291,17 @@ public class VehicleCode : Agent
     }
     void Explode()
     {
-        
-            hasTrishots = 0;
-          
 
-            GameObject a4 = Instantiate(explosion, transform.position, Quaternion.identity);
-            a4.transform.parent = xGame1.transform;
-            // Hide();
-            xAddReward(-1f);
-            killPlayer = true;
+        hasTrishots = 0;
 
-        
+
+        GameObject a4 = Instantiate(explosion, transform.position, Quaternion.identity);
+        a4.transform.parent = xGame1.transform;
+        // Hide();
+        xAddReward(-1f);
+        killPlayer = true;
+
+
     }
 
     void HyperspaceJump()
@@ -336,7 +336,7 @@ public class VehicleCode : Agent
         }
 
         //ExplosionInfo info = new ExplosionInfo();
-       // info.origin = transform.position;
+        // info.origin = transform.position;
         //info.strength = 0.1f;
         //GameObject.Find("GameController").SendMessage("MakeExplosion", info);
         Show();

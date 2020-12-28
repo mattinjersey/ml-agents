@@ -113,9 +113,9 @@ public class AsteroidController : MonoBehaviour {
 
             {
                 Vector3 delta;
-                z = Random.Range(-15, 15);
-                x = Random.Range(-5, 5);
-                delta = player.transform.position - new Vector3(0, x, z);
+                z = Random.Range(-15, 3);
+                x = Random.Range(-15, 3);
+                delta = player.transform.position - new Vector3(x, z, 0);
                 if (delta.magnitude>10)
                     {
                     keepGoing = false;
@@ -306,7 +306,7 @@ public class AsteroidController : MonoBehaviour {
             float z = Random.Range(-15, 15);
             float  x = Random.Range(-5, 5);
             aSaucer.transform.parent = this.transform;
-            aSaucer.transform.position = new Vector3(0, x, z)+transform.position;
+            aSaucer.transform.position = new Vector3(x, z, 0)+transform.position;
             //newSaucerAllowed = false;
             float aRand = 5f ;
             Vector3 astVel = new Vector3(Random.Range(-aRand, aRand), Random.Range(-aRand, aRand), Random.Range(-aRand, aRand));
