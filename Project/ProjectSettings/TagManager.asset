@@ -32,6 +32,9 @@ TagManager:
   - playerWeapon
   - Asteroid
   - Saucer
+  - Weapon
+  - playerEngine
+  - playerBlaster
   layers:
   - Default
   - TransparentFX

@@ -15,7 +15,7 @@ namespace Unity.MLAgents.Extensions.Sensors
         /// Name of this grid sensor.
         /// </summary>
         public string Name;
-
+      //  bool FirstHit = true;
         //
         // Main Parameters
         //
@@ -822,11 +822,11 @@ namespace Unity.MLAgents.Extensions.Sensors
                 Matrix4x4 cubeTransform = Gizmos.matrix;
                 for (int i = 0; i < NumCells; i++)
                 {
-                    if (RotateToAgent)
+                    if (RotateToAgent )
                     {
-                        cubeTransform = Matrix4x4.TRS(CellToPoint(i) + offset, transform.rotation, scale);
+                        cubeTransform = Matrix4x4.TRS(CellToPoint(i) + offset, Quaternion.Euler(0, 0, 90), scale);
                     }
-                    else
+                    else 
                     {
                         cubeTransform = Matrix4x4.TRS(CellToPoint(i, false) + transform.position + offset, Quaternion.identity, scale);
                     }
@@ -834,6 +834,7 @@ namespace Unity.MLAgents.Extensions.Sensors
                     Gizmos.color = CellActivity[i];
                     Gizmos.DrawCube(Vector3.zero, Vector3.one);
                 }
+              
 
                 Gizmos.matrix = oldGizmoMatrix;
 

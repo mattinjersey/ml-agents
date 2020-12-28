@@ -121,6 +121,12 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &544722718 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1266525740697263750, guid: 0aa0b3e202ced4441b0e2943eff46b4d,
+    type: 3}
+  m_PrefabInstance: {fileID: 2814531189608190609}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &710533806
 GameObject:
   m_ObjectHideFlags: 0
@@ -439,10 +445,50 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -0
       objectReference: {fileID: 0}
+    - target: {fileID: 1266525739214210746, guid: 0aa0b3e202ced4441b0e2943eff46b4d,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1266525739214210746, guid: 0aa0b3e202ced4441b0e2943eff46b4d,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1266525739214210746, guid: 0aa0b3e202ced4441b0e2943eff46b4d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1266525739214210746, guid: 0aa0b3e202ced4441b0e2943eff46b4d,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1266525739214210746, guid: 0aa0b3e202ced4441b0e2943eff46b4d,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1266525739214210746, guid: 0aa0b3e202ced4441b0e2943eff46b4d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1266525739214210746, guid: 0aa0b3e202ced4441b0e2943eff46b4d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1266525739214532288, guid: 0aa0b3e202ced4441b0e2943eff46b4d,
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1266525739214532288, guid: 0aa0b3e202ced4441b0e2943eff46b4d,
+        type: 3}
+      propertyPath: m_TagString
+      value: playerBlaster
       objectReference: {fileID: 0}
     - target: {fileID: 1266525739289763408, guid: 0aa0b3e202ced4441b0e2943eff46b4d,
         type: 3}
@@ -727,6 +773,54 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 2814531189608190609}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2814531189608190611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2814531189608190610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 801669c0cdece6b40b2e741ad0b119ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: 
+  CellScaleX: 1
+  deltaX: {x: 0, y: 0, z: 0}
+  CellScaleZ: 1
+  GridNumSideX: 32
+  GridNumSideZ: 32
+  CellScaleY: 1
+  RotateToAgent: 1
+  ChannelDepth: 090000000100000001000000
+  DetectableObjects:
+  - Saucer
+  - Asteroid
+  - playerBlaster
+  - Player
+  - playerEngine
+  - playerWeapon
+  - enemyWeapon
+  ObserveMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  gridDepthType: 1
+  rootReference: {fileID: 544722718}
+  ObservationPerCell: 11
+  NumberOfObservations: 11264
+  ChannelOffsets: 00000000090000000a000000
+  DebugColors:
+  - {r: 0.65756476, g: 0.8679245, b: 0.35617658, a: 0}
+  - {r: 0.9811321, g: 0.42114633, b: 0.42114633, a: 0}
+  - {r: 0.9150943, g: 0.58961874, b: 0.20287468, a: 0}
+  - {r: 0.6698113, g: 0.05371129, b: 0.05371129, a: 0}
+  - {r: 0.8113208, g: 0.08802067, b: 0.6434287, a: 0}
+  - {r: 0.17515129, g: 0.3856672, b: 0.9056604, a: 0}
+  - {r: 0.1462264, g: 1, b: 0.949891, a: 0}
+  GizmoYOffset: 0
+  ShowGizmos: 1
+  CompressionType: 1
 --- !u!114 &2814531189608190612
 MonoBehaviour:
   m_ObjectHideFlags: 0
