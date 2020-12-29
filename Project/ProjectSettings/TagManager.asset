@@ -5,7 +5,6 @@ TagManager:
   serializedVersion: 2
   tags:
   - agent
-  - iWall
   - wall
   - pit
   - frozenAgent
@@ -27,14 +26,13 @@ TagManager:
   - symbol_O
   - symbol_X_Goal
   - symbol_O_Goal
-  - purpleAgent
-  - purpleGoal
   - playerWeapon
   - Asteroid
   - Saucer
   - Weapon
   - playerEngine
   - playerBlaster
+  - enemyWeapon
   layers:
   - Default
   - TransparentFX

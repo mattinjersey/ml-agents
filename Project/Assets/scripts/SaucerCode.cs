@@ -13,12 +13,13 @@ public class SaucerCode : MonoBehaviour {
     private Rigidbody rb;
     private Vector3 vector;
     private float turn;
+    public GameObject xGame1;
 
 
     // Use this for initialization
-    void Start () {
+    void Start() {
         rb = GetComponent<Rigidbody>();
-       // rb.angularVelocity = new Vector3(0.0f, 0.0f, 6.0f);
+        // rb.angularVelocity = new Vector3(0.0f, 0.0f, 6.0f);
         rb.transform.rotation = Quaternion.Euler(spin, 0.0f, 0.0f);
         float aRand = 5f;
         bool keepGoing = true;
@@ -26,17 +27,21 @@ public class SaucerCode : MonoBehaviour {
         while (keepGoing)
         {
             astVel = new Vector3(Random.Range(-aRand, aRand), 0, Random.Range(-aRand, aRand));
-            if (astVel.magnitude>5f)
+            if (astVel.magnitude > 5f)
             {
                 keepGoing = false;
             }
         }
         rb.velocity = astVel;
         // decide where to start
-       // StartAtRandomEdge();
-        Invoke("Shoot", 1.5f);
+        // StartAtRandomEdge();
+        Invoke("Shoot", 0.5f);
     }
-
+    public void setXGame(GameObject aGame)
+    {
+        xGame1 = aGame;
+        Debug.Log("setting xGame:" + xGame1);
+    }
     void FixedUpdate() {
         turn += 3.0f*360.0f * Time.fixedDeltaTime;
         float wobble = 0.01f * turn;
@@ -58,17 +63,21 @@ public class SaucerCode : MonoBehaviour {
         float angle = Mathf.Atan2(direction.x, direction.z) * 180.0f/Mathf.PI;
 
         // random variance (in degrees)
-        float vary = Random.Range(-30.0f, 30.0f) + Random.Range(-45.0f, 45.0f);
+        float vary = Random.Range(-35.0f, 35.0f);
 
         // even narrower for higher levels
         if ( isSmall ) {
-           // vary /= ( GameController.currentLevel - 1 );
+            vary = Random.Range(-25.0f, 25.0f);
+            // vary /= ( GameController.currentLevel - 1 );
         }
 
-        Instantiate(torpedo, transform.position, Quaternion.Euler(0.0f,angle+vary,0.0f));
-
+        GameObject xTorpedo=Instantiate(torpedo, transform.position, Quaternion.Euler(0.0f,angle+vary,0.0f));
+        xTorpedo.name = "enemyTorpedo";
+        xTorpedo.tag = "enemyWeapon";
+        xTorpedo.transform.parent = xGame1.transform;
+        Debug.Log("launch saucer torpedo!");
         // shoot again after a delay
-        Invoke("Shoot", Random.Range(1.5f,2.5f));
+        Invoke("Shoot", Random.Range(0.5f,1.5f));
     }
 
     void StartAtRandomEdge() {

@@ -73,7 +73,7 @@ public class AsteroidCode : MonoBehaviour {
         rb.mass = rb.mass * mult*mult*mult; 
     }
     
-    void Break(bool scorePoints) {
+    public void Break(bool scorePoints) {
         AsterInfo info = new AsterInfo();
         info.level = level + 1;
         info.position = transform.position;

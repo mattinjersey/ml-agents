@@ -28,6 +28,8 @@ namespace Unity.MLAgents.Extensions.Sensors
         [Range(0.05f, 1000f)]
         public float CellScaleX = 1f;
         public Vector3 deltaX;
+        bool firstHit = true;
+        Quaternion aQuarter;
         /// <summary>
         /// The depth of each grid cell.
         /// </summary>
@@ -218,8 +220,9 @@ namespace Unity.MLAgents.Extensions.Sensors
         /// The height of the gizmos grid.
         /// </summary>
         [Tooltip("The height of the gizmos grid")]
+        public float GizmoXOffset = 0f;
         public float GizmoYOffset = 0f;
-
+    
         /// <summary>
         /// Whether to show gizmos or not.
         /// </summary>
@@ -530,6 +533,11 @@ namespace Unity.MLAgents.Extensions.Sensors
         public float[] Perceive()
         {
             Reset();
+            if (firstHit)
+            {
+                aQuarter = transform.rotation;
+                firstHit = false;
+            }
             using (TimerStack.Instance.Scoped("GridSensor.Perceive"))
             {
                 // TODO: make these part of the class
@@ -543,11 +551,11 @@ namespace Unity.MLAgents.Extensions.Sensors
                     if (RotateToAgent)
                     {
                         cellCenter = transform.TransformPoint(CellPoints[cellIndex]);
-                        foundColliders = Physics.OverlapBox(cellCenter, halfCellScale, transform.rotation, ObserveMask);
+                        foundColliders = Physics.OverlapBox(cellCenter, halfCellScale, aQuarter, ObserveMask);
                     }
                     else
                     {
-                        cellCenter = deltaX + CellPoints[cellIndex];
+                        cellCenter = deltaX + CellPoints[cellIndex] + transform.parent.transform.position ;
                         foundColliders = Physics.OverlapBox(cellCenter, halfCellScale, Quaternion.identity, ObserveMask);
                     }
 
@@ -615,29 +623,29 @@ namespace Unity.MLAgents.Extensions.Sensors
         /// <example>
         ///   Here is an example of extenind GetObjectData to include information about a potential Rigidbody:
         ///   <code>
-        ///     protected override float[] GetObjectData(GameObject currentColliderGo,
-        ///                                     float type_index, float normalized_distance)
-        ///     {
-        ///         float[] channelValues = new float[ChannelDepth.Length]; // ChannelDepth.Length = 4 in this example
-        ///         channelValues[0] = type_index;
-        ///         Rigidbody goRb = currentColliderGo.GetComponent&lt;Rigidbody&gt;();
-        ///         if (goRb != null)
-        ///         {
-        ///             channelValues[1] = goRb.velocity.x;
-        ///             channelValues[2] = goRb.velocity.y;
-        ///             channelValues[3] = goRb.velocity.z;
-        ///         }
-        ///         return channelValues;
-        ///     }
+         protected virtual float[] GetObjectData(GameObject currentColliderGo,
+                                            float type_index, float normalized_distance)
+             {
+                 float[] channelValues = new float[ChannelDepth.Length]; // ChannelDepth.Length = 4 in this example
+                 channelValues[0] = type_index;
+                Rigidbody goRb = currentColliderGo.GetComponent<Rigidbody>();
+                 if (goRb != null)
+                 {
+                     channelValues[1] = goRb.velocity.x/30;
+                     channelValues[2] = goRb.velocity.y/30;
+                   //  channelValues[3] = goRb.velocity.z;
+                }
+                 return channelValues;
+             }
         ///  </code>
         /// </example>
-        protected virtual float[] GetObjectData(GameObject currentColliderGo, float typeIndex, float normalizedDistance)
+       /* protected virtual float[] GetObjectData(GameObject currentColliderGo, float typeIndex, float normalizedDistance)
         {
             float[] channelValues = new float[ChannelDepth.Length];
             channelValues[0] = typeIndex;
             return channelValues;
         }
-
+       */
         /// <summary>
         /// Runs basic validation assertions to check that the values can be normalized
         /// </summary>
@@ -645,14 +653,14 @@ namespace Unity.MLAgents.Extensions.Sensors
         /// <param name="currentColliderGo">The gameobject used for better error messages</param>
         protected virtual void ValidateValues(float[] channelValues, GameObject currentColliderGo)
         {
-            for (int j = 0; j < channelValues.Length; j++)
+          /*  for (int j = 0; j < channelValues.Length; j++)
             {
                 if (channelValues[j] < 0)
                     throw new UnityAgentsException("Expected ChannelValue[" + j + "] for " + currentColliderGo.name + " to be non-negative, was " + channelValues[j]);
 
                 if (channelValues[j] > ChannelDepth[j])
                     throw new UnityAgentsException("Expected ChannelValue[" + j + "]  for " + currentColliderGo.name + " to be less than ChannelDepth[" + j + "] (" + ChannelDepth[j] + "), was " + channelValues[j]);
-            }
+            }*/
         }
 
         /// <summary>
@@ -751,7 +759,7 @@ namespace Unity.MLAgents.Extensions.Sensors
             float z = (cell / GridNumSideZ - OffsetGridNumSide) * CellScaleZ - DiffNumSideZX;
 
             if (shouldTransformPoint)
-                return transform.TransformPoint(new Vector3(x, 0, z));
+                return  transform.parent.transform.TransformPoint(new Vector3(x, 0, z));
             return new Vector3(x, 0, z);
         }
 
@@ -762,7 +770,7 @@ namespace Unity.MLAgents.Extensions.Sensors
         /// <param name="globalPoint">The 3D point in global space</param>
         public int PointToCell(Vector3 globalPoint)
         {
-            Vector3 point = transform.InverseTransformPoint(globalPoint);
+            Vector3 point = transform.parent.transform.InverseTransformPoint(globalPoint);
 
             if (point.x < -HalfOfGridX || point.x > HalfOfGridX || point.z < -HalfOfGridZ || point.z > HalfOfGridZ)
                 return -1;
@@ -817,7 +825,7 @@ namespace Unity.MLAgents.Extensions.Sensors
                 Perceive();
 
                 Vector3 scale = new Vector3(CellScaleX, 1, CellScaleZ);
-                Vector3 offset = new Vector3(0, GizmoYOffset, 0);
+                Vector3 offset = new Vector3(GizmoXOffset, 0, GizmoYOffset);
                 Matrix4x4 oldGizmoMatrix = Gizmos.matrix;
                 Matrix4x4 cubeTransform = Gizmos.matrix;
                 for (int i = 0; i < NumCells; i++)
@@ -828,7 +836,7 @@ namespace Unity.MLAgents.Extensions.Sensors
                     }
                     else 
                     {
-                        cubeTransform = Matrix4x4.TRS(CellToPoint(i, false) + transform.position + offset, Quaternion.identity, scale);
+                        cubeTransform = Matrix4x4.TRS(CellToPoint(i, false) + transform.parent.transform.position + offset, Quaternion.identity, scale);
                     }
                     Gizmos.matrix = oldGizmoMatrix * cubeTransform;
                     Gizmos.color = CellActivity[i];

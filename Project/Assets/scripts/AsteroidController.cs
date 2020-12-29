@@ -58,8 +58,8 @@ public class AsteroidController : MonoBehaviour {
     private int playerLives;
     private float levelStartTime;
     private float gameoverTime;
-   // private bool showCredits;
-
+    // private bool showCredits;
+    GameObject xGame1;
     private bool newSaucerAllowed;
 
 
@@ -70,6 +70,7 @@ public class AsteroidController : MonoBehaviour {
      
        // player= GameObject.Find("PlayerShip");
         refVehicle = (VehicleCode)player.GetComponent(typeof(VehicleCode));
+        xGame1 = this.gameObject;
        // Debug.Log(gameBoundary);
         init = true;
         //ReinitLevel();
@@ -80,8 +81,10 @@ public class AsteroidController : MonoBehaviour {
     public void ReinitLevel() {
 
         GameObject[] aster = GameObject.FindGameObjectsWithTag("Asteroid");
+        Debug.Log("num asteroids:" + aster.Length);
         foreach (GameObject ast in aster)
         {
+           
             if (ast.transform.parent == this.transform)
             {
                 Destroy(ast);
@@ -89,6 +92,14 @@ public class AsteroidController : MonoBehaviour {
         }
         GameObject[] saucer = GameObject.FindGameObjectsWithTag("Saucer");
         foreach (GameObject ast in saucer)
+        {
+            if (ast.transform.parent == this.transform)
+            {
+                Destroy(ast);
+            }
+        }
+        GameObject[] torp = GameObject.FindGameObjectsWithTag("enemyWeapon");
+        foreach (GameObject ast in torp)
         {
             if (ast.transform.parent == this.transform)
             {
@@ -177,6 +188,7 @@ public class AsteroidController : MonoBehaviour {
             float aScale = 0.1f;
             obstacle.transform.localScale = new Vector3(aScale, aScale, aScale);
             obstacle.transform.position = info.position + aOffset;
+            obstacle.tag = "Asteroid";
             float aRand =5f*info.level;
            // float aRand = 25;
             Vector3 astVel = new Vector3(Random.Range(-aRand, aRand), Random.Range(-aRand, aRand), Random.Range(-aRand, aRand));
@@ -277,11 +289,12 @@ public class AsteroidController : MonoBehaviour {
 
     void SpawnSaucerAfterRandomDelay() {
         // ater a random time, spawn a saucer
-        float wait = 15.0f * Random.Range(1.0f, 2.0f) / Mathf.Pow(currentLevel,0.3f);
+        float wait = 25.0f * Random.Range(1.0f, 2.0f) / Mathf.Pow(currentLevel,0.3f);
         Invoke("SpawnSaucer", wait);
     }
     public void KillSaucer()
     {
+        newSaucerAllowed = true;
         SpawnSaucerAfterRandomDelay();
     }
     void SpawnSaucer() {
@@ -303,11 +316,13 @@ public class AsteroidController : MonoBehaviour {
                 saucer = saucerSmall;
             }
             GameObject aSaucer=Instantiate(saucer);
+            aSaucer.tag = "Saucer";
             float z = Random.Range(-15, 15);
             float  x = Random.Range(-5, 5);
             aSaucer.transform.parent = this.transform;
             aSaucer.transform.position = new Vector3(x, z, 0)+transform.position;
-            //newSaucerAllowed = false;
+            aSaucer.GetComponent<SaucerCode>().setXGame(xGame1);
+            newSaucerAllowed = false;
             float aRand = 5f ;
             Vector3 astVel = new Vector3(Random.Range(-aRand, aRand), Random.Range(-aRand, aRand), Random.Range(-aRand, aRand));
 

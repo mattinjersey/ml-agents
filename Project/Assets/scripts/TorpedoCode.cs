@@ -4,14 +4,14 @@ using System.Collections;
 public class TorpedoCode : MonoBehaviour {
 
     private float speed;
-    private float spin;
-    private Vector3 vector;
+    //private float spin;
+    //private Vector3 vector;
 
     // Use this for initialization
     void Start() {
-        spin = 0.0f;
-        speed = 20.0f * transform.lossyScale.y;
-        vector = transform.forward;
+        //spin = 0.0f;
+        speed = 5.0f;
+        this.GetComponent<Rigidbody>().velocity = transform.forward * speed;
     }
 
     void Update() {
@@ -60,11 +60,11 @@ public class TorpedoCode : MonoBehaviour {
 
     // Update is called once per frame
     void FixedUpdate() {
-        Vector3 position = transform.position;
-        transform.position = position + vector * speed * Time.fixedDeltaTime;
+       // Vector3 position = transform.position;
+       // transform.position = position + vector * speed * Time.fixedDeltaTime;
 
-        spin += 17.0f;
-        transform.rotation = Quaternion.Euler(0.0f, spin, 0.0f);
+      //  spin += 17.0f;
+      //  transform.rotation = Quaternion.Euler(0.0f, spin, 0.0f);
     }
 
     void OnTriggerEnter(Collider other) {

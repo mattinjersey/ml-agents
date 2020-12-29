@@ -48,11 +48,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 438d66bad48e5f44b904640db94130e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  torpedo: {fileID: 182346, guid: 557e693a677a5d44097f1287564a6905, type: 3}
-  explosion: {fileID: 107360, guid: 288e783d813d09d40a2af036eb51deb6, type: 3}
+  torpedo: {fileID: 142944, guid: f6c6c9ff1b3b3ea42b4030f1d6a73066, type: 3}
+  explosion: {fileID: 107360, guid: 214d3797dcf42a242a1fa7b821ff4281, type: 3}
   spin: 4
   speed: 2.8
   isSmall: 0
+  xGame1: {fileID: 0}
 --- !u!33 &3326318
 MeshFilter:
   m_ObjectHideFlags: 0

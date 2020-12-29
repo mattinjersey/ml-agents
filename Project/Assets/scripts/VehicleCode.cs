@@ -224,11 +224,14 @@ public class VehicleCode : Agent
                     hasTrishots -= 1;
                     GameObject a1 = Instantiate(blast, blaster[1].transform.position, blaster[1].transform.rotation);
                     a1.transform.parent = xGame1.transform;
+                    a1.tag = "playerWeapon";
                     GameObject a2 = Instantiate(blast, blaster[2].transform.position, blaster[2].transform.rotation);
                     a2.transform.parent = xGame1.transform;
+                    a2.tag = "playerWeapon";
                 }
                 GameObject a3 = Instantiate(blast, blaster[0].transform.position, blaster[0].transform.rotation);
                 a3.transform.parent = xGame1.transform;
+                a3.tag = "playerWeapon";
                 GetComponent<AudioSource>().Play();
                 nextShotTime = now + 0.2;
             }
@@ -238,7 +241,7 @@ public class VehicleCode : Agent
     void OnCollisionEnter(Collision collision)
     {
         GameObject other = collision.gameObject;
-        Debug.Log("Collision found ! isAlive:" + isAlive);
+        Debug.Log("Collision found ! isAlive:" + isAlive+"  otherTag:"+other.tag);
         if (isAlive)
         {
             // I've crashed into something
