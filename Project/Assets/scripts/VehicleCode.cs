@@ -285,6 +285,7 @@ public class VehicleCode : Agent
     {
         myReward += inScore;
         bigScore += inScore;
+        SetReward(inScore);
         Debug.Log("bigScore:" + bigScore + "   inScore:" + inScore);
         scoreText.text = "Score: " + (int)(bigScore * 100f);
     }
