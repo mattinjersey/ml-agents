@@ -262,6 +262,12 @@ public class VehicleCode : Agent
 
     public void SetResetParameters()
     {
+        Vector3 aPos = transform.parent.transform.position+new Vector3(2, 0, -3);
+        transform.position = aPos;
+        float x = rb.velocity.x;
+        float y = rb.velocity.y;
+        float z = rb.velocity.z;
+        rb.velocity = new Vector3(0, 0, 0);
 
     }
     void ApplyPowerup(GameObject powerup)
