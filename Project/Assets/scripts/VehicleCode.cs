@@ -262,7 +262,8 @@ public class VehicleCode : Agent
 
     public void SetResetParameters()
     {
-
+        Vector3 aVector = gameObject.transform.parent.transform.position + new Vector3(4, 0, -4);
+        transform.position = aVector;
     }
     void ApplyPowerup(GameObject powerup)
     {
