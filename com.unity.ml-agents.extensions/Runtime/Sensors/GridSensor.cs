@@ -632,7 +632,7 @@ namespace Unity.MLAgents.Extensions.Sensors
                  if (goRb != null)
                  {
                      channelValues[1] = goRb.velocity.x/30;
-                     channelValues[2] = goRb.velocity.z/30;
+                     channelValues[2] = goRb.velocity.y/30;
                    //  channelValues[3] = goRb.velocity.z;
                 }
                  return channelValues;
