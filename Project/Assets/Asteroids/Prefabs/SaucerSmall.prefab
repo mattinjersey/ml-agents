@@ -53,6 +53,7 @@ MonoBehaviour:
   spin: 8
   speed: 3.8
   isSmall: 1
+  xGame1: {fileID: 0}
 --- !u!33 &3311004
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -137,7 +138,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 189978}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 6baedce2684dd7a4194fce835cfdc7f6, type: 3}
